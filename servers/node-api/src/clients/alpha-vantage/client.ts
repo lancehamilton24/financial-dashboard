@@ -35,13 +35,17 @@ export async function fetchCompanyOverview(
   const errorMessage = body["Error Message"] ?? body.Information;
 
   if (errorMessage) {
-    throw new Error(`[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed: ${errorMessage}`);
+    throw new Error(
+      `[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed: ${errorMessage}`,
+    );
   }
 
   const result = await alphaVantageCompanyOverviewSchema.safeParseAsync(body);
 
   if (!result.success) {
-    throw new Error(`[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed. Unexpected response shape for symbol '${normalizedSymbol}'.`);
+    throw new Error(
+      `[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed. Unexpected response shape for symbol '${normalizedSymbol}'.`,
+    );
   }
 
   return result.data;
