@@ -1,11 +1,13 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import config from "./config/index.js";
+import { companyOverviewRoutes } from "./routes/company-overview.js";
 import { healthRoutes } from "./routes/health.js";
 
 const app = Fastify({ logger: true });
 
 await app.register(cors, { origin: true });
+await app.register(companyOverviewRoutes, { prefix: "/api" });
 await app.register(healthRoutes, { prefix: "/api" });
 
 try {
