@@ -17,18 +17,23 @@ export async function companyOverviewRoutes(fastify: FastifyInstance) {
       const { symbol } = request.params;
 
       try {
-        const data = await getCompanyOverview(symbol);
+        const result = await getCompanyOverview(symbol);
 
-        if (data === null) {
+        if (result === null) {
           return reply.code(404).send("Company overview not found");
         }
 
-        return data;
+        return result;
       } catch (err) {
         fastify.log.error(err);
         return reply
           .code(500)
-          .send({ error: "Failed to fetch company overview" });
+          .send({
+            error:
+              err instanceof Error
+                ? err.message
+                : "An unexpected error occurred while fetching company overview.",
+          });
       }
     },
   );
