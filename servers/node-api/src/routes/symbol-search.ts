@@ -19,7 +19,7 @@ export async function symbolSearchRoutes(fastify: FastifyInstance) {
       try {
         const result = await getSymbolSearchResults(keywords);
 
-        if (result === null) {
+        if (!result) {
           return reply
             .code(404)
             .send("No symbols found matching the provided keywords.");

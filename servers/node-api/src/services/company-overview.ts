@@ -1,13 +1,23 @@
 import { fetchCompanyOverview } from "../clients/alpha-vantage/client.js";
 import type { AlphaVantageCompanyOverview } from "../clients/alpha-vantage/schema.js";
 import type { CompanyOverview } from "../types/company-overview.type.js";
+import { normalizeSymbol } from "../utils/symbol.js";
+import { getExactSymbolMatch } from "./symbol-search.js";
 
 export async function getCompanyOverview(
   symbol: string,
 ): Promise<CompanyOverview | null> {
-  const overview = await fetchCompanyOverview(symbol);
+  const normalizedSymbol = normalizeSymbol(symbol);
 
-  if (overview === null) {
+  const symbolMatch = await getExactSymbolMatch(normalizedSymbol);
+
+  if (!symbolMatch) {
+    return null;
+  }
+
+  const overview = await fetchCompanyOverview(normalizedSymbol);
+
+  if (!overview) {
     return null;
   }
 

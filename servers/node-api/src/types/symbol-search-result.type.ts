@@ -6,4 +6,4 @@ export type SymbolSearchResultItem = {
   currency: string;
 };
 
-export type SymbolSearchResult = SymbolSearchResultItem[];
+export type SymbolSearchResults = SymbolSearchResultItem[];

@@ -8,8 +8,8 @@ import { symbolSearchRoutes } from "./routes/symbol-search.js";
 const app = Fastify({ logger: true });
 
 await app.register(cors, { origin: true });
-await app.register(companyOverviewRoutes, { prefix: "/api" });
 await app.register(healthRoutes, { prefix: "/api" });
+await app.register(companyOverviewRoutes, { prefix: "/api" });
 await app.register(symbolSearchRoutes, { prefix: "/api" });
 
 try {

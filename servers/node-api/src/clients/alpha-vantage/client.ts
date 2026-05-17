@@ -9,15 +9,9 @@ import {
 export async function fetchCompanyOverview(
   symbol: string,
 ): Promise<AlphaVantageCompanyOverview | null> {
-  const normalizedSymbol = symbol.trim().toUpperCase();
-
-  if (!normalizedSymbol) {
-    throw new Error("Company symbol is required.");
-  }
-
   const url = new URL(config.alphaVantageBaseUrl);
   url.searchParams.set("function", "OVERVIEW");
-  url.searchParams.set("symbol", normalizedSymbol);
+  url.searchParams.set("symbol", symbol);
   url.searchParams.set("apikey", config.alphaVantageApiKey);
 
   const response = await fetch(url);
@@ -46,14 +40,14 @@ export async function fetchCompanyOverview(
 
   if (!result.success) {
     throw new Error(
-      `[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed. Unexpected response shape for symbol '${normalizedSymbol}'.`,
+      `[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed. Unexpected response shape for symbol '${symbol}'.`,
     );
   }
 
   return result.data;
 }
 
-export async function searchSymbols(
+export async function fetchSymbolSearchResults(
   keywords: string,
 ): Promise<AlphaVantageSymbolSearchResponse> {
   const url = new URL(config.alphaVantageBaseUrl);
@@ -65,7 +59,7 @@ export async function searchSymbols(
 
   if (!response.ok) {
     throw new Error(
-      `[searchSymbols] Symbol search GET request to Alpha Vantage failed with status ${response.status}.`,
+      `[fetchSymbolSearchResults] Symbol search GET request to Alpha Vantage failed with status ${response.status}.`,
     );
   }
 
@@ -74,7 +68,7 @@ export async function searchSymbols(
 
   if (errorMessage) {
     throw new Error(
-      `[searchSymbols] Symbol search GET request to Alpha Vantage failed: ${errorMessage}`,
+      `[fetchSymbolSearchResults] Symbol search GET request to Alpha Vantage failed: ${errorMessage}`,
     );
   }
 
@@ -83,7 +77,7 @@ export async function searchSymbols(
 
   if (!result.success) {
     throw new Error(
-      `[searchSymbols] Unexpected response shape for keywords '${keywords}'.`,
+      `[fetchSymbolSearchResults] Unexpected response shape for keywords '${keywords}'.`,
     );
   }
 
