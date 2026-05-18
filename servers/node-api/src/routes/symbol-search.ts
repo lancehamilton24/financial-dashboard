@@ -1,4 +1,9 @@
 import type { FastifyInstance } from "fastify";
+import {
+  errorResponseSchema,
+  notFoundResponseSchema,
+} from "../schemas/error-response.schema.js";
+import { symbolSearchResultsSchema } from "../schemas/symbol-search-result.schema.js";
 import { symbolSearchQuerySchema } from "../schemas/symbol-search-query.schema.js";
 import { getSymbolSearchResults } from "../services/symbol-search.js";
 import type { SymbolSearchQuery } from "../types/symbol-search-query.type.js";
@@ -10,7 +15,14 @@ export async function symbolSearchRoutes(fastify: FastifyInstance) {
     "/symbols/search",
     {
       schema: {
+        tags: ["Symbols"],
+        summary: "Search ticker symbols",
         querystring: symbolSearchQuerySchema,
+        response: {
+          200: symbolSearchResultsSchema,
+          404: notFoundResponseSchema,
+          500: errorResponseSchema,
+        },
       },
     },
     async (request, reply) => {
