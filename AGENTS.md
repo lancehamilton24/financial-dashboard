@@ -3,7 +3,7 @@
 ## Project Overview
 
 - This is a pnpm monorepo for the Financial Dashboard platform.
-- Workspace packages live under `clients/*` and `servers/*`, as defined in `pnpm-workspace.yaml`.
+- Workspace packages live under `clients/*`, `packages/*`, and `servers/*`, as defined in `pnpm-workspace.yaml`.
 - The root `package.json` is private and declares `pnpm@10.33.2` as the package manager.
 - Use Node.js 20 or newer.
 
@@ -12,11 +12,14 @@
 - `servers/node-api` is the current backend package.
 - `servers/node-api` is an ESM Fastify REST API named `@financial-dashboard/node-api`.
 - API source lives in `servers/node-api/src`.
-- `servers/node-api/src/server.js` creates the Fastify app, registers CORS, and mounts routes under `/api`.
-- `servers/node-api/src/config/index.js` reads environment config from `process.env`.
+- `servers/node-api/src/server.ts` creates the Fastify app, registers CORS, Swagger docs, and mounts routes under `/api`.
+- `servers/node-api/src/config/index.ts` reads environment config from `process.env`.
 - `servers/node-api/src/routes` contains Fastify route plugins. The health route is `GET /api/health`.
-- `servers/node-api/src/services` is reserved for business logic.
+- `servers/node-api/src/services` contains business logic.
+- `servers/node-api/src/clients` contains external provider clients.
+- `servers/node-api/src/schemas` contains request and response schemas.
 - `clients/` exists for future frontend packages, but it is currently empty.
+- `packages/` is reserved for shared packages such as API contracts, generated clients, shared config, or design tokens.
 
 ## Package Manager Rules
 
@@ -25,7 +28,7 @@
 - Commit `pnpm-lock.yaml` whenever dependency changes update it.
 - Add dependencies to the package that uses them with `pnpm --filter <package-name> add <dependency>`.
 - Add shared root tooling only with `pnpm add -w <tool>`.
-- The README mentions a root `.npmrc`, but one is not currently present. Do not assume it exists.
+- The root `.npmrc` disables npm lockfile creation.
 
 ## Common Commands
 
@@ -33,6 +36,7 @@
 - Start the API in dev mode: `pnpm --filter @financial-dashboard/node-api dev`
 - Start the API normally: `pnpm --filter @financial-dashboard/node-api start`
 - Run API tests: `pnpm --filter @financial-dashboard/node-api test`
+- Run all available checks: `pnpm run check`
 - Run dev scripts across packages: `pnpm --parallel run dev`
 
 ## Environment Rules
@@ -43,6 +47,8 @@
 - `servers/node-api` expects:
   - `PORT`, defaulting to `3001`
   - `NODE_ENV`, defaulting to `development`
+  - `ALPHA_VANTAGE_API_KEY`
+  - `ALPHA_VANTAGE_BASE_URL`
 - `servers/node-api` scripts use Node's native `--env-file=.env` flag, so run package scripts through pnpm from the workspace rather than starting source files ad hoc.
 
 ## Coding Conventions

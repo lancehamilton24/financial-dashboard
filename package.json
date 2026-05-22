@@ -4,7 +4,12 @@
   "packageManager": "pnpm@10.33.2",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "lint": "pnpm --recursive lint"
+    "build": "pnpm --recursive --if-present build",
+    "typecheck": "pnpm --recursive --if-present typecheck",
+    "test": "pnpm --recursive --if-present test",
+    "lint": "pnpm --recursive --if-present lint",
+    "format:check": "pnpm --recursive --if-present format:check",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

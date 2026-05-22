@@ -4,7 +4,7 @@ import {
   type AlphaVantageSymbolSearchResponse,
   alphaVantageCompanyOverviewSchema,
   alphaVantageSymbolSearchResponseSchema,
-} from "./schema.js";
+} from "./schemas/index.js";
 
 export async function fetchCompanyOverview(
   symbol: string,
@@ -47,7 +47,7 @@ export async function fetchCompanyOverview(
   return result.data;
 }
 
-export async function fetchSymbolSearchResults(
+export async function fetchSymbolSearchResponse(
   keywords: string,
 ): Promise<AlphaVantageSymbolSearchResponse> {
   const url = new URL(config.alphaVantageBaseUrl);
@@ -59,7 +59,7 @@ export async function fetchSymbolSearchResults(
 
   if (!response.ok) {
     throw new Error(
-      `[fetchSymbolSearchResults] Symbol search GET request to Alpha Vantage failed with status ${response.status}.`,
+      `[fetchSymbolSearchResponse] Symbol search GET request to Alpha Vantage failed with status ${response.status}.`,
     );
   }
 
@@ -68,7 +68,7 @@ export async function fetchSymbolSearchResults(
 
   if (errorMessage) {
     throw new Error(
-      `[fetchSymbolSearchResults] Symbol search GET request to Alpha Vantage failed: ${errorMessage}`,
+      `[fetchSymbolSearchResponse] Symbol search GET request to Alpha Vantage failed: ${errorMessage}`,
     );
   }
 
@@ -77,7 +77,7 @@ export async function fetchSymbolSearchResults(
 
   if (!result.success) {
     throw new Error(
-      `[fetchSymbolSearchResults] Unexpected response shape for keywords '${keywords}'.`,
+      `[fetchSymbolSearchResponse] Unexpected response shape for keywords '${keywords}'.`,
     );
   }
 
