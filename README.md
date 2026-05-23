@@ -18,7 +18,8 @@ financial-dashboard/
 |       |   |-- services/    # Business logic
 |       |   |-- types/       # TypeScript types
 |       |   |-- utils/       # Shared package utilities
-|       |   `-- server.ts    # API entry point
+|       |   |-- app.ts       # Fastify app setup
+|       |   `-- server.ts    # API startup entry point
 |       |-- .env.example
 |       |-- package.json
 |       `-- tsconfig.json
@@ -144,6 +145,8 @@ Each application package owns its own `.env` file. Commit `.env.example` files, 
 - Source lives in `servers/node-api/src`.
 - Routes are registered under `/api`.
 - Swagger UI is available at `/docs`.
+- `src/app.ts` builds and configures the Fastify app.
+- `src/server.ts` starts the app.
 - Configuration reads are centralized in `src/config`.
 - External API access lives under `src/clients`.
 - Business logic lives under `src/services`.

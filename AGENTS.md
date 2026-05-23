@@ -12,7 +12,8 @@
 - `servers/node-api` is the current backend package.
 - `servers/node-api` is an ESM Fastify REST API named `@financial-dashboard/node-api`.
 - API source lives in `servers/node-api/src`.
-- `servers/node-api/src/server.ts` creates the Fastify app, registers CORS, Swagger docs, and mounts routes under `/api`.
+- `servers/node-api/src/app.ts` creates the Fastify app, registers CORS, Swagger docs, and mounts routes under `/api`.
+- `servers/node-api/src/server.ts` starts the Fastify app.
 - `servers/node-api/src/config/index.ts` reads environment config from `process.env`.
 - `servers/node-api/src/routes` contains Fastify route plugins. The health route is `GET /api/health`.
 - `servers/node-api/src/services` contains business logic.
