@@ -16,7 +16,10 @@ export async function symbolSearchRoutes(fastify: FastifyInstance) {
     {
       schema: {
         tags: ["Symbols"],
+        operationId: "searchSymbols",
         summary: "Search ticker symbols",
+        description:
+          "Searches ticker symbols by keyword and returns matching securities.",
         querystring: symbolSearchQuerySchema,
         response: {
           200: symbolSearchResultsSchema,

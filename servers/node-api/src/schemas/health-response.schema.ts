@@ -1,4 +1,5 @@
 export const healthResponseSchema = {
+  description: "API health status.",
   type: "object",
   required: ["status"],
   properties: {

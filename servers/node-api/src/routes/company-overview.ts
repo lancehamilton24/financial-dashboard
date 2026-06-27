@@ -16,7 +16,10 @@ export async function companyOverviewRoutes(fastify: FastifyInstance) {
     {
       schema: {
         tags: ["Companies"],
+        operationId: "getCompanyOverview",
         summary: "Get company overview",
+        description:
+          "Returns company fundamentals and overview data for a ticker symbol.",
         params: symbolParamSchema,
         response: {
           200: companyOverviewSchema,
