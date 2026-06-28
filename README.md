@@ -1,14 +1,14 @@
 # Financial Dashboard
 
-A monorepo containing the services, clients, and shared packages for the Financial Dashboard platform.
+A monorepo containing the backends, frontends, and shared packages for the Financial Dashboard platform.
 
 ## Project Structure
 
 ```text
 financial-dashboard/
-|-- clients/
+|-- frontends/
 |   `-- ...                  # Future frontend applications
-|-- servers/
+|-- backends/
 |   `-- node-api/            # Fastify REST API
 |       |-- src/
 |       |   |-- clients/     # External provider clients
@@ -31,8 +31,8 @@ financial-dashboard/
 
 Current workspace locations are:
 
-- `clients/*` for frontend applications.
-- `servers/*` for backend applications.
+- `frontends/*` for frontend applications.
+- `backends/*` for backend applications.
 
 This repo can also contain non-JavaScript projects in the future, such as .NET or Python APIs. Those projects should use their native tooling, while pnpm continues to manage JavaScript and TypeScript packages.
 
@@ -65,7 +65,7 @@ pnpm install
 Copy the API environment examples and fill in local .env values:
 
 ```bash
-cp servers/node-api/.env.example servers/node-api/.env
+cp backends/node-api/.env.example backends/node-api/.env
 ```
 
 Start the Node API in development mode:
@@ -140,9 +140,9 @@ Each application package owns its own `.env` file. Commit `.env.example` files, 
 
 ## Current API Package
 
-`servers/node-api` is an ESM Fastify REST API.
+`backends/node-api` is an ESM Fastify REST API.
 
-- Source lives in `servers/node-api/src`.
+- Source lives in `backends/node-api/src`.
 - Routes are registered under `/api`.
 - Swagger UI is available at `/docs`.
 - `src/app.ts` builds and configures the Fastify app.
@@ -156,11 +156,11 @@ Each application package owns its own `.env` file. Commit `.env.example` files, 
 The repo is intentionally structured so additional implementations can live side by side:
 
 ```text
-clients/react-web
-clients/angular-web
-servers/node-api
-servers/dotnet-api
-servers/python-api
+frontends/react-web
+frontends/angular-web
+backends/node-api
+backends/dotnet-api
+backends/python-api
 packages/api-contract
 packages/api-client-ts
 ```
@@ -169,7 +169,7 @@ The future `packages/api-contract` package can hold an OpenAPI contract that des
 
 ## Adding a JavaScript Workspace Package
 
-1. Create a folder under `clients/`, `servers/`, or `packages/`.
+1. Create a folder under `frontends/`, `backends/`, or `packages/`.
 2. Run `pnpm init` inside it.
 3. Set `"private": true`.
 4. Use a scoped package name such as `@financial-dashboard/react-web`.
