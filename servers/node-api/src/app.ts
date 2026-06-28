@@ -16,6 +16,8 @@ export async function buildApp() {
       openapi: "3.0.3",
       info: {
         title: "Financial Dashboard API",
+        description:
+          "REST API for health checks, ticker symbol search, and company overview data.",
         version: "1.0.0",
       },
       tags: [

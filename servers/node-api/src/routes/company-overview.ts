@@ -1,11 +1,6 @@
 import type { FastifyInstance } from "fastify";
+import { companyOverviewRouteSchema } from "../schemas/companies/company-overview-route.schema.js";
 import { getCompanyOverview } from "../services/company-overview.js";
-import { companyOverviewSchema } from "../schemas/company-overview.schema.js";
-import {
-  errorResponseSchema,
-  notFoundResponseSchema,
-} from "../schemas/error-response.schema.js";
-import { symbolParamSchema } from "../schemas/symbol-param.schema.js";
 import type { SymbolParam } from "../types/symbol-param.type.js";
 
 export async function companyOverviewRoutes(fastify: FastifyInstance) {
@@ -13,21 +8,7 @@ export async function companyOverviewRoutes(fastify: FastifyInstance) {
     Params: SymbolParam;
   }>(
     "/companies/:symbol/overview",
-    {
-      schema: {
-        tags: ["Companies"],
-        operationId: "getCompanyOverview",
-        summary: "Get company overview",
-        description:
-          "Returns company fundamentals and overview data for a ticker symbol.",
-        params: symbolParamSchema,
-        response: {
-          200: companyOverviewSchema,
-          404: notFoundResponseSchema,
-          500: errorResponseSchema,
-        },
-      },
-    },
+    { schema: companyOverviewRouteSchema },
     async (request, reply) => {
       const { symbol } = request.params;
 
