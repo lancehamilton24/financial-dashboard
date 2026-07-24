@@ -1,4 +1,5 @@
 export const companyOverviewSchema = {
+  description: "Company fundamentals and overview data.",
   type: "object",
   required: [
     "symbol",

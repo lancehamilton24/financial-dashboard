@@ -64,6 +64,11 @@ export async function fetchSymbolSearchResponse(
   }
 
   const body = await response.json();
+
+  if (isEmptyObject(body)) {
+    return { bestMatches: [] };
+  }
+  
   const errorMessage = body["Error Message"] ?? body.Information;
 
   if (errorMessage) {
