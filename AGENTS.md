@@ -3,22 +3,22 @@
 ## Project Overview
 
 - This is a pnpm monorepo for the Financial Dashboard platform.
-- Workspace packages live under `frontends/*`, `packages/*`, and `backends/*`, as defined in `pnpm-workspace.yaml`.
+- Workspace packages live under `frontends/*`, `packages/*`, and `backend/*`, as defined in `pnpm-workspace.yaml`.
 - The root `package.json` is private and declares `pnpm@10.33.2` as the package manager.
 - Use Node.js 20 or newer.
 
 ## Package Layout
 
-- `backends/node-api` is the current backend package.
-- `backends/node-api` is an ESM Fastify REST API named `@financial-dashboard/node-api`.
-- API source lives in `backends/node-api/src`.
-- `backends/node-api/src/app.ts` creates the Fastify app, registers CORS, Swagger docs, and mounts routes under `/api`.
-- `backends/node-api/src/server.ts` starts the Fastify app.
-- `backends/node-api/src/config/index.ts` reads environment config from `process.env`.
-- `backends/node-api/src/routes` contains Fastify route plugins. The health route is `GET /api/health`.
-- `backends/node-api/src/services` contains business logic.
-- `backends/node-api/src/clients` contains external provider clients.
-- `backends/node-api/src/schemas` contains request and response schemas.
+- `backend/node-api` is the current backend package.
+- `backend/node-api` is an ESM Fastify REST API named `@financial-dashboard/node-api`.
+- API source lives in `backend/node-api/src`.
+- `backend/node-api/src/app.ts` creates the Fastify app, registers CORS, Swagger docs, and mounts routes under `/api`.
+- `backend/node-api/src/server.ts` starts the Fastify app.
+- `backend/node-api/src/config/index.ts` reads environment config from `process.env`.
+- `backend/node-api/src/routes` contains Fastify route plugins. The health route is `GET /api/health`.
+- `backend/node-api/src/services` contains business logic.
+- `backend/node-api/src/clients` contains external provider clients.
+- `backend/node-api/src/schemas` contains request and response schemas.
 - `frontends/` exists for future frontend packages, but it is currently empty.
 - `packages/` is reserved for shared packages such as API contracts, generated clients, shared config, or design tokens.
 
@@ -45,12 +45,12 @@
 - Each package owns its own `.env` file.
 - Never commit `.env` files.
 - Commit `.env.example` files when adding or changing required variables.
-- `backends/node-api` expects:
+- `backend/node-api` expects:
   - `PORT`, defaulting to `3001`
   - `NODE_ENV`, defaulting to `development`
   - `ALPHA_VANTAGE_API_KEY`
   - `ALPHA_VANTAGE_BASE_URL`
-- `backends/node-api` scripts use Node's native `--env-file=.env` flag, so run package scripts through pnpm from the workspace rather than starting source files ad hoc.
+- `backend/node-api` scripts use Node's native `--env-file=.env` flag, so run package scripts through pnpm from the workspace rather than starting source files ad hoc.
 
 ## Coding Conventions
 

@@ -22,12 +22,11 @@ export async function companyOverviewRoutes(fastify: FastifyInstance) {
         return result;
       } catch (err) {
         fastify.log.error(err);
-        return reply.code(500).send({
-          error:
-            err instanceof Error
-              ? err.message
-              : "An unexpected error occurred while fetching company overview.",
-        });
+        return reply
+          .code(500)
+          .send(
+            "An unexpected error occurred while fetching company overview.",
+          );
       }
     },
   );

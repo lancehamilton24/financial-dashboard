@@ -24,12 +24,9 @@ export async function symbolSearchRoutes(fastify: FastifyInstance) {
         return result;
       } catch (err) {
         fastify.log.error(err);
-        return reply.code(500).send({
-          error:
-            err instanceof Error
-              ? err.message
-              : "An unexpected error occurred while searching for symbols.",
-        });
+        return reply
+          .code(500)
+          .send("An unexpected error occurred while searching for symbols.");
       }
     },
   );

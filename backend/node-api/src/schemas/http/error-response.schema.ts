@@ -1,10 +1,6 @@
 export const errorResponseSchema = {
   description: "Unexpected server error.",
-  type: "object",
-  required: ["error"],
-  properties: {
-    error: { type: "string" },
-  },
+  type: "string",
 } as const;
 
 export const notFoundResponseSchema = {
