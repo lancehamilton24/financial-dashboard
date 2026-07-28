@@ -1,10 +1,10 @@
-import { fetchSymbolSearchResponse } from "../clients/alpha-vantage/client.js";
-import type { AlphaVantageSymbolSearchMatch } from "../clients/alpha-vantage/schemas/index.js";
+import { fetchSymbolSearchResponse } from "../../../clients/alpha-vantage/client.js";
+import type { AlphaVantageSymbolSearchMatch } from "../../../clients/alpha-vantage/schemas/index.js";
 import type {
   SymbolSearchResults,
   SymbolSearchResultItem,
-} from "../types/symbol-search-result.type.js";
-import { normalizeSymbol } from "../utils/symbol.js";
+} from "./symbol-search.types.js";
+import { normalizeSymbol } from "../shared/symbol.js";
 
 export async function getSymbolSearchResults(
   keywords: string,

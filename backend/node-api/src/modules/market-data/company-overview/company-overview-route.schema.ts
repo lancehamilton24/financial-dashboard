@@ -2,8 +2,8 @@ import { companyOverviewSchema } from "./company-overview.schema.js";
 import {
   errorResponseSchema,
   notFoundResponseSchema,
-} from "../http/error-response.schema.js";
-import { symbolParamSchema } from "../symbols/symbol-param.schema.js";
+} from "../../../shared/schemas/error-response.schema.js";
+import { symbolParamSchema } from "./symbol-param.schema.js";
 
 export const companyOverviewRouteSchema = {
   tags: ["Companies"],

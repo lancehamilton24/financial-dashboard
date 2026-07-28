@@ -1,7 +1,7 @@
 import {
   errorResponseSchema,
   notFoundResponseSchema,
-} from "../http/error-response.schema.js";
+} from "../../../shared/schemas/error-response.schema.js";
 import { symbolSearchQuerySchema } from "./symbol-search-query.schema.js";
 import { symbolSearchResultsSchema } from "./symbol-search-result.schema.js";
 

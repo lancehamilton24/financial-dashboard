@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
-import { symbolSearchRouteSchema } from "../schemas/symbols/symbol-search-route.schema.js";
-import { getSymbolSearchResults } from "../services/symbol-search.js";
-import type { SymbolSearchQuery } from "../types/symbol-search-query.type.js";
+import { symbolSearchRouteSchema } from "./symbol-search-route.schema.js";
+import { getSymbolSearchResults } from "./symbol-search.service.js";
+import type { SymbolSearchQuery } from "./symbol-search.types.js";
 
 export async function symbolSearchRoutes(fastify: FastifyInstance) {
   fastify.get<{

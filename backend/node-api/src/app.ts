@@ -3,9 +3,8 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import Fastify from "fastify";
 import config from "./config/index.js";
-import { companyOverviewRoutes } from "./routes/company-overview.js";
-import { healthRoutes } from "./routes/health.js";
-import { symbolSearchRoutes } from "./routes/symbol-search.js";
+import { healthModule } from "./modules/health/index.js";
+import { marketDataModule } from "./modules/market-data/index.js";
 
 export async function buildApp() {
   const app = Fastify({ logger: true });
@@ -45,9 +44,8 @@ export async function buildApp() {
   await app.register(swaggerUi, {
     routePrefix: "/docs",
   });
-  await app.register(healthRoutes, { prefix: "/api" });
-  await app.register(companyOverviewRoutes, { prefix: "/api" });
-  await app.register(symbolSearchRoutes, { prefix: "/api" });
+  await app.register(healthModule, { prefix: "/api" });
+  await app.register(marketDataModule, { prefix: "/api" });
 
   return app;
 }

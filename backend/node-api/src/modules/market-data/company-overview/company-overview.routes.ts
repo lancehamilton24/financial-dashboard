@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
-import { companyOverviewRouteSchema } from "../schemas/companies/company-overview-route.schema.js";
-import { getCompanyOverview } from "../services/company-overview.js";
-import type { SymbolParam } from "../types/symbol-param.type.js";
+import { companyOverviewRouteSchema } from "./company-overview-route.schema.js";
+import { getCompanyOverview } from "./company-overview.service.js";
+import type { SymbolParam } from "./company-overview.types.js";
 
 export async function companyOverviewRoutes(fastify: FastifyInstance) {
   fastify.get<{

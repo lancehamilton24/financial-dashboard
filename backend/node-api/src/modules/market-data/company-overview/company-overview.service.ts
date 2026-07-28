@@ -1,7 +1,7 @@
-import { fetchCompanyOverview } from "../clients/alpha-vantage/client.js";
-import type { AlphaVantageCompanyOverview } from "../clients/alpha-vantage/schemas/index.js";
-import type { CompanyOverview } from "../types/company-overview.type.js";
-import { normalizeSymbol } from "../utils/symbol.js";
+import { fetchCompanyOverview } from "../../../clients/alpha-vantage/client.js";
+import type { AlphaVantageCompanyOverview } from "../../../clients/alpha-vantage/schemas/index.js";
+import type { CompanyOverview } from "./company-overview.types.js";
+import { normalizeSymbol } from "../shared/symbol.js";
 
 export async function getCompanyOverview(
   symbol: string,

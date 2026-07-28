@@ -11,3 +11,7 @@ export type CompanyOverview = {
   eps: string;
   forwardPE: string;
 };
+
+export type SymbolParam = {
+  symbol: string;
+};
