@@ -1,4 +1,3 @@
-import config from "../../config/index.js";
 import {
   type AlphaVantageCompanyOverview,
   type AlphaVantageSymbolSearchResponse,
@@ -6,13 +5,28 @@ import {
   alphaVantageSymbolSearchResponseSchema,
 } from "./schemas/index.js";
 
-export async function fetchCompanyOverview(
+export type AlphaVantageClientOptions = {
+  apiKey: string;
+  baseUrl: string;
+};
+
+export function createAlphaVantageClient(options: AlphaVantageClientOptions) {
+  return {
+    fetchCompanyOverview: (symbol: string) =>
+      fetchCompanyOverview(options, symbol),
+    fetchSymbolSearchResponse: (keywords: string) =>
+      fetchSymbolSearchResponse(options, keywords),
+  };
+}
+
+async function fetchCompanyOverview(
+  options: AlphaVantageClientOptions,
   symbol: string,
 ): Promise<AlphaVantageCompanyOverview | null> {
-  const url = new URL(config.alphaVantageBaseUrl);
+  const url = new URL(options.baseUrl);
   url.searchParams.set("function", "OVERVIEW");
   url.searchParams.set("symbol", symbol);
-  url.searchParams.set("apikey", config.alphaVantageApiKey);
+  url.searchParams.set("apikey", options.apiKey);
 
   const response = await fetch(url);
 
@@ -47,13 +61,14 @@ export async function fetchCompanyOverview(
   return result.data;
 }
 
-export async function fetchSymbolSearchResponse(
+async function fetchSymbolSearchResponse(
+  options: AlphaVantageClientOptions,
   keywords: string,
 ): Promise<AlphaVantageSymbolSearchResponse> {
-  const url = new URL(config.alphaVantageBaseUrl);
+  const url = new URL(options.baseUrl);
   url.searchParams.set("function", "SYMBOL_SEARCH");
   url.searchParams.set("keywords", keywords.trim());
-  url.searchParams.set("apikey", config.alphaVantageApiKey);
+  url.searchParams.set("apikey", options.apiKey);
 
   const response = await fetch(url);
 

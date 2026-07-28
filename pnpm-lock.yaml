@@ -36,6 +36,12 @@ importers:
         specifier: ^8.59.1
         version: 8.59.4(eslint@10.4.0)(typescript@6.0.3)
 
+  backend/api-clients:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+
   backend/node-api:
     dependencies:
       '@fastify/cors':
@@ -47,12 +53,12 @@ importers:
       '@fastify/swagger-ui':
         specifier: ^5.2.6
         version: 5.2.6
+      '@financial-dashboard/api-clients':
+        specifier: workspace:*
+        version: link:../api-clients
       fastify:
         specifier: ^5.8.5
         version: 5.8.5
-      zod:
-        specifier: ^4.4.3
-        version: 4.4.3
 
 packages:
 

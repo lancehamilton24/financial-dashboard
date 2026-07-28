@@ -1,5 +1,5 @@
-import { fetchCompanyOverview } from "../../../clients/alpha-vantage/client.js";
-import type { AlphaVantageCompanyOverview } from "../../../clients/alpha-vantage/schemas/index.js";
+import type { AlphaVantageCompanyOverview } from "@financial-dashboard/api-clients/alpha-vantage";
+import { alphaVantageClient } from "../../../configured-api-clients.js";
 import type { CompanyOverview } from "./company-overview.types.js";
 import { normalizeSymbol } from "../shared/symbol.js";
 
@@ -8,7 +8,8 @@ export async function getCompanyOverview(
 ): Promise<CompanyOverview | null> {
   const normalizedSymbol = normalizeSymbol(symbol);
 
-  const overview = await fetchCompanyOverview(normalizedSymbol);
+  const overview =
+    await alphaVantageClient.fetchCompanyOverview(normalizedSymbol);
 
   if (!overview) {
     return null;

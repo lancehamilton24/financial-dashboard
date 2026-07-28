@@ -1,5 +1,5 @@
-import { fetchSymbolSearchResponse } from "../../../clients/alpha-vantage/client.js";
-import type { AlphaVantageSymbolSearchMatch } from "../../../clients/alpha-vantage/schemas/index.js";
+import type { AlphaVantageSymbolSearchMatch } from "@financial-dashboard/api-clients/alpha-vantage";
+import { alphaVantageClient } from "../../../configured-api-clients.js";
 import type {
   SymbolSearchResults,
   SymbolSearchResultItem,
@@ -9,7 +9,8 @@ import { normalizeSymbol } from "../shared/symbol.js";
 export async function getSymbolSearchResults(
   keywords: string,
 ): Promise<SymbolSearchResults | null> {
-  const matches = await fetchSymbolSearchResponse(keywords);
+  const matches =
+    await alphaVantageClient.fetchSymbolSearchResponse(keywords);
 
   if (matches.bestMatches.length === 0) {
     return null;

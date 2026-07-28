@@ -1,0 +1,20 @@
+{
+  "name": "@financial-dashboard/api-clients",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./alpha-vantage": {
+      "types": "./src/alpha-vantage/index.ts",
+      "default": "./dist/alpha-vantage/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
+}
