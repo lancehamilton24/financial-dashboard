@@ -36,13 +36,13 @@ importers:
         specifier: ^8.59.1
         version: 8.59.4(eslint@10.4.0)(typescript@6.0.3)
 
-  backend/api-clients:
+  packages/api-clients:
     dependencies:
       zod:
         specifier: ^4.4.3
         version: 4.4.3
 
-  backend/node-api:
+  apps/api:
     dependencies:
       '@fastify/cors':
         specifier: ^11.2.0
@@ -55,7 +55,7 @@ importers:
         version: 5.2.6
       '@financial-dashboard/api-clients':
         specifier: workspace:*
-        version: link:../api-clients
+        version: link:../../packages/api-clients
       fastify:
         specifier: ^5.8.5
         version: 5.8.5
