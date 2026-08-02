@@ -4,25 +4,31 @@ import {
   alphaVantageCompanyOverviewSchema,
   alphaVantageSymbolSearchResponseSchema,
 } from "./schemas/index.js";
+import type {
+  CompanyOverview,
+  MarketDataClient,
+  SymbolSearchResult,
+} from "../market-data/index.js";
 
 export type AlphaVantageClientOptions = {
   apiKey: string;
   baseUrl: string;
 };
 
-export function createAlphaVantageClient(options: AlphaVantageClientOptions) {
+export function createAlphaVantageClient(
+  options: AlphaVantageClientOptions,
+): MarketDataClient {
   return {
     fetchCompanyOverview: (symbol: string) =>
       fetchCompanyOverview(options, symbol),
-    fetchSymbolSearchResponse: (keywords: string) =>
-      fetchSymbolSearchResponse(options, keywords),
+    searchSymbols: (keywords: string) => searchSymbols(options, keywords),
   };
 }
 
 async function fetchCompanyOverview(
   options: AlphaVantageClientOptions,
   symbol: string,
-): Promise<AlphaVantageCompanyOverview | null> {
+): Promise<CompanyOverview | null> {
   const url = new URL(options.baseUrl);
   url.searchParams.set("function", "OVERVIEW");
   url.searchParams.set("symbol", symbol);
@@ -58,13 +64,13 @@ async function fetchCompanyOverview(
     );
   }
 
-  return result.data;
+  return toCompanyOverview(result.data);
 }
 
-async function fetchSymbolSearchResponse(
+async function searchSymbols(
   options: AlphaVantageClientOptions,
   keywords: string,
-): Promise<AlphaVantageSymbolSearchResponse> {
+): Promise<SymbolSearchResult[]> {
   const url = new URL(options.baseUrl);
   url.searchParams.set("function", "SYMBOL_SEARCH");
   url.searchParams.set("keywords", keywords.trim());
@@ -74,21 +80,21 @@ async function fetchSymbolSearchResponse(
 
   if (!response.ok) {
     throw new Error(
-      `[fetchSymbolSearchResponse] Symbol search GET request to Alpha Vantage failed with status ${response.status}.`,
+      `[searchSymbols] Symbol search GET request to Alpha Vantage failed with status ${response.status}.`,
     );
   }
 
   const body = await response.json();
 
   if (isEmptyObject(body)) {
-    return { bestMatches: [] };
+    return [];
   }
-  
+
   const errorMessage = body["Error Message"] ?? body.Information;
 
   if (errorMessage) {
     throw new Error(
-      `[fetchSymbolSearchResponse] Symbol search GET request to Alpha Vantage failed: ${errorMessage}`,
+      `[searchSymbols] Symbol search GET request to Alpha Vantage failed: ${errorMessage}`,
     );
   }
 
@@ -97,11 +103,41 @@ async function fetchSymbolSearchResponse(
 
   if (!result.success) {
     throw new Error(
-      `[fetchSymbolSearchResponse] Unexpected response shape for keywords '${keywords}'.`,
+      `[searchSymbols] Unexpected response shape for keywords '${keywords}'.`,
     );
   }
 
-  return result.data;
+  return result.data.bestMatches.map(toSymbolSearchResult);
+}
+
+function toCompanyOverview(
+  overview: AlphaVantageCompanyOverview,
+): CompanyOverview {
+  return {
+    symbol: overview.Symbol,
+    assetType: overview.AssetType,
+    name: overview.Name,
+    description: overview.Description,
+    exchange: overview.Exchange,
+    country: overview.Country,
+    sector: overview.Sector,
+    industry: overview.Industry,
+    peRatio: overview.PERatio,
+    eps: overview.EPS,
+    forwardPE: overview.ForwardPE,
+  };
+}
+
+function toSymbolSearchResult(
+  match: AlphaVantageSymbolSearchResponse["bestMatches"][number],
+): SymbolSearchResult {
+  return {
+    symbol: match["1. symbol"],
+    name: match["2. name"],
+    type: match["3. type"],
+    region: match["4. region"],
+    currency: match["8. currency"],
+  };
 }
 
 function isEmptyObject(value: unknown): boolean {

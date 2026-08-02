@@ -1,6 +1,5 @@
-import type { AlphaVantageCompanyOverview } from "@financial-dashboard/api-clients/alpha-vantage";
-import { alphaVantageClient } from "../../../configured-api-clients.js";
-import type { CompanyOverview } from "./company-overview.types.js";
+import type { CompanyOverview } from "@financial-dashboard/api-clients/market-data";
+import { marketDataClient } from "../../../configured-api-clients.js";
 import { normalizeSymbol } from "../shared/symbol.js";
 
 export async function getCompanyOverview(
@@ -9,33 +8,15 @@ export async function getCompanyOverview(
   const normalizedSymbol = normalizeSymbol(symbol);
 
   const overview =
-    await alphaVantageClient.fetchCompanyOverview(normalizedSymbol);
+    await marketDataClient.fetchCompanyOverview(normalizedSymbol);
 
   if (!overview) {
     return null;
   }
 
-  if (overview.Symbol.toUpperCase() !== normalizedSymbol) {
+  if (overview.symbol.toUpperCase() !== normalizedSymbol) {
     return null;
   }
 
-  return toCompanyOverview(overview);
-}
-
-function toCompanyOverview(
-  overview: AlphaVantageCompanyOverview,
-): CompanyOverview {
-  return {
-    symbol: overview.Symbol,
-    assetType: overview.AssetType,
-    name: overview.Name,
-    description: overview.Description,
-    exchange: overview.Exchange,
-    country: overview.Country,
-    sector: overview.Sector,
-    industry: overview.Industry,
-    peRatio: overview.PERatio,
-    eps: overview.EPS,
-    forwardPE: overview.ForwardPE,
-  };
+  return overview;
 }

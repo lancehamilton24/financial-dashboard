@@ -128,12 +128,13 @@ Each application package owns its own `.env` file. Commit `.env.example` files, 
 
 ### `@financial-dashboard/node-api`
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `PORT` | `3001` | Port the API listens on |
-| `NODE_ENV` | `development` | Runtime environment |
-| `ALPHA_VANTAGE_API_KEY` | none | Alpha Vantage API key |
-| `ALPHA_VANTAGE_BASE_URL` | none | Alpha Vantage API base URL |
+| Variable                 | Default         | Description                          |
+| ------------------------ | --------------- | ------------------------------------ |
+| `PORT`                   | `3001`          | Port the API listens on              |
+| `NODE_ENV`               | `development`   | Runtime environment                  |
+| `MARKET_DATA_PROVIDER`   | `alpha-vantage` | Market-data provider used by the API |
+| `ALPHA_VANTAGE_API_KEY`  | none            | Alpha Vantage API key                |
+| `ALPHA_VANTAGE_BASE_URL` | none            | Alpha Vantage API base URL           |
 
 ## Current API Package
 

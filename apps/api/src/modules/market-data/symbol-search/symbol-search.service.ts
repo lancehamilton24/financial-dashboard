@@ -1,29 +1,23 @@
-import type { AlphaVantageSymbolSearchMatch } from "@financial-dashboard/api-clients/alpha-vantage";
-import { alphaVantageClient } from "../../../configured-api-clients.js";
-import type {
-  SymbolSearchResults,
-  SymbolSearchResultItem,
-} from "./symbol-search.types.js";
+import type { SymbolSearchResult } from "@financial-dashboard/api-clients/market-data";
+import { marketDataClient } from "../../../configured-api-clients.js";
+import type { SymbolSearchResults } from "./symbol-search.types.js";
 import { normalizeSymbol } from "../shared/symbol.js";
 
 export async function getSymbolSearchResults(
   keywords: string,
 ): Promise<SymbolSearchResults | null> {
-  const matches =
-    await alphaVantageClient.fetchSymbolSearchResponse(keywords);
+  const matches = await marketDataClient.searchSymbols(keywords);
 
-  if (matches.bestMatches.length === 0) {
+  if (matches.length === 0) {
     return null;
   }
 
-  const results = matches.bestMatches.map(toSymbolSearchResult);
-
-  return results;
+  return matches;
 }
 
 export async function getExactSymbolMatch(
   symbol: string,
-): Promise<SymbolSearchResultItem | null> {
+): Promise<SymbolSearchResult | null> {
   const normalizedSymbol = normalizeSymbol(symbol);
 
   const matches = await getSymbolSearchResults(normalizedSymbol);
@@ -34,16 +28,4 @@ export async function getExactSymbolMatch(
     ) ?? null;
 
   return result;
-}
-
-function toSymbolSearchResult(
-  symbol: AlphaVantageSymbolSearchMatch,
-): SymbolSearchResultItem {
-  return {
-    symbol: symbol["1. symbol"],
-    name: symbol["2. name"],
-    type: symbol["3. type"],
-    region: symbol["4. region"],
-    currency: symbol["8. currency"],
-  };
 }

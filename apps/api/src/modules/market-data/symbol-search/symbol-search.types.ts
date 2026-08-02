@@ -2,12 +2,5 @@ export type SymbolSearchQuery = {
   keywords: string;
 };
 
-export type SymbolSearchResultItem = {
-  symbol: string;
-  name: string;
-  type: string;
-  region: string;
-  currency: string;
-};
-
-export type SymbolSearchResults = SymbolSearchResultItem[];
+export type SymbolSearchResults = SymbolSearchResult[];
+import type { SymbolSearchResult } from "@financial-dashboard/api-clients/market-data";
