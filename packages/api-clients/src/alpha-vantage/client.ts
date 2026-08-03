@@ -6,9 +6,9 @@ import {
 } from "./schemas/index.js";
 import type {
   CompanyOverview,
-  MarketDataClient,
   SymbolSearchResult,
-} from "../market-data/index.js";
+} from "@financial-dashboard/api-contracts/market-data";
+import type { MarketDataClient } from "../market-data/index.js";
 
 export type AlphaVantageClientOptions = {
   apiKey: string;

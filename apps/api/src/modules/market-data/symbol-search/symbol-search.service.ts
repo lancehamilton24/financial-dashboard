@@ -1,6 +1,8 @@
-import type { SymbolSearchResult } from "@financial-dashboard/api-clients/market-data";
+import type {
+  SymbolSearchResult,
+  SymbolSearchResults,
+} from "@financial-dashboard/api-contracts/market-data";
 import { marketDataClient } from "../../../configured-api-clients.js";
-import type { SymbolSearchResults } from "./symbol-search.types.js";
 import { normalizeSymbol } from "../shared/symbol.js";
 
 export async function getSymbolSearchResults(

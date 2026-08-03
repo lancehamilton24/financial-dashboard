@@ -2,6 +2,7 @@ export {
   alphaVantageCompanyOverviewSchema,
   type AlphaVantageCompanyOverview,
 } from "./company-overview.schema.js";
+
 export {
   alphaVantageSymbolSearchMatchSchema,
   alphaVantageSymbolSearchResponseSchema,

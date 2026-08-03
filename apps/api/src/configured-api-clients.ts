@@ -9,6 +9,10 @@ function configureMarketDataClient(): MarketDataClient {
         apiKey: config.alphaVantageApiKey,
         baseUrl: config.alphaVantageBaseUrl,
       });
+    default:
+      throw new Error(
+        `Unsupported market data provider: ${config.marketDataProvider}`,
+      );
   }
 }
 

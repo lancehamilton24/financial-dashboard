@@ -12,12 +12,13 @@
 - `apps/api` is the current backend application.
 - `apps/api` is an ESM Fastify REST API named `@financial-dashboard/node-api`.
 - API source lives in `apps/api/src`.
-- `apps/api/src/app.ts` creates the Fastify app, registers CORS, Swagger docs, and mounts routes under `/api`.
+- `apps/api/src/app.ts` creates the Fastify app, registers CORS, and mounts routes under `/api`.
 - `apps/api/src/server.ts` starts the Fastify app.
 - `apps/api/src/config/index.ts` reads environment config from `process.env`.
-- `apps/api/src/modules` contains feature-oriented Fastify routes, handlers, schemas, and services. The health route is `GET /api/health`.
+- `apps/api/src/modules` contains feature-oriented Fastify routes, handlers, and services. The health route is `GET /api/health`.
 - `apps/web` is reserved for the frontend application.
 - `packages/api-clients` contains reusable external-provider clients.
+- `packages/api-contracts` contains provider-neutral API types shared by applications and API clients.
 
 ## Package Manager Rules
 

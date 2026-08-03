@@ -12,14 +12,14 @@ financial-dashboard/
 |       |-- src/
 |       |   |-- config/      # Environment config
 |       |   |-- modules/     # Feature-oriented API modules
-|       |   |-- shared/      # Shared API code
 |       |   |-- app.ts       # Fastify app setup
 |       |   `-- server.ts    # API startup entry point
 |       |-- .env.example
 |       |-- package.json
 |       `-- tsconfig.json
 |-- packages/
-|   `-- api-clients/         # Reusable external-provider clients
+|   |-- api-clients/         # Reusable external-provider clients
+|   `-- api-contracts/       # Shared frontend/backend API types
 |-- .npmrc                   # Prevents npm lockfile creation
 |-- package.json             # Workspace root
 |-- pnpm-lock.yaml
@@ -69,12 +69,6 @@ Start the Node API in development mode:
 
 ```bash
 pnpm --filter @financial-dashboard/node-api dev
-```
-
-The API serves Swagger UI at:
-
-```text
-http://localhost:3001/docs
 ```
 
 ## Common Commands
@@ -142,12 +136,10 @@ Each application package owns its own `.env` file. Commit `.env.example` files, 
 
 - Source lives in `apps/api/src`.
 - Routes are registered under `/api`.
-- Swagger UI is available at `/docs`.
 - `src/app.ts` builds and configures the Fastify app.
 - `src/server.ts` starts the app.
 - Configuration reads are centralized in `src/config`.
-- External API access lives under `src/clients`.
-- Business logic lives under `src/services`.
+- Feature routes, handlers, and services live under `src/modules`.
 
 ## Future Polyglot Repo Direction
 
@@ -156,11 +148,11 @@ The repo is intentionally structured so additional implementations can live side
 ```text
 apps/web
 apps/api
-packages/api-contract
-packages/api-client-ts
+packages/api-contracts
+packages/api-clients
 ```
 
-The future `packages/api-contract` package can hold an OpenAPI contract that describes the HTTP API independently of any specific backend implementation. A generated `packages/api-client-ts` package can then provide typed API calls for React, Angular, or other TypeScript clients.
+`packages/api-contracts` holds the provider-neutral types shared by the API, frontend, and external-provider clients. `packages/api-clients` retrieves and normalizes provider data into those shared types.
 
 ## Adding a JavaScript Workspace Package
 

@@ -1,4 +1,4 @@
-import type { CompanyOverview } from "@financial-dashboard/api-clients/market-data";
+import type { CompanyOverview } from "@financial-dashboard/api-contracts/market-data";
 import { marketDataClient } from "../../../configured-api-clients.js";
 import { normalizeSymbol } from "../shared/symbol.js";
 
