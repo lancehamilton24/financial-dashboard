@@ -1,7 +1,3 @@
-export type SymbolSearchQuery = {
-  keywords: string;
-};
-
 export type SymbolSearchResult = {
   symbol: string;
   name: string;

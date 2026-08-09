@@ -1,9 +1,8 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { SymbolSearchQuery } from "@financial-dashboard/api-contracts/market-data";
 import { getSymbolSearchResults } from "./symbol-search.service.js";
 
 export async function searchSymbolsHandler(
-  request: FastifyRequest<{ Querystring: SymbolSearchQuery }>,
+  request: FastifyRequest<{ Querystring: string }>,
   reply: FastifyReply,
 ) {
   try {
