@@ -1,9 +1,9 @@
 import type { FastifyInstance } from "fastify";
-import type { SymbolParam } from "@financial-dashboard/api-contracts/market-data";
 import { getCompanyOverviewHandler } from "./company-overview.handlers.js";
+import type { CompanyOverviewParams } from "./company-overview.types.js";
 
 export async function companyOverviewRoutes(fastify: FastifyInstance) {
-  fastify.get<{ Params: SymbolParam }>(
+  fastify.get<{ Params: CompanyOverviewParams }>(
     "/companies/:symbol/overview",
     getCompanyOverviewHandler,
   );

@@ -1,8 +1,9 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { getSymbolSearchResults } from "./symbol-search.service.js";
+import type { SymbolSearchQuery } from "./symbol-search.types.js";
 
 export async function searchSymbolsHandler(
-  request: FastifyRequest<{ Querystring: string }>,
+  request: FastifyRequest<{ Querystring: SymbolSearchQuery }>,
   reply: FastifyReply,
 ) {
   try {

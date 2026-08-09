@@ -68,7 +68,7 @@ cp apps/api/.env.example apps/api/.env
 Start the Node API in development mode:
 
 ```bash
-pnpm --filter @financial-dashboard/node-api dev
+pnpm run dev
 ```
 
 ## Common Commands
