@@ -48,7 +48,6 @@
   - `NODE_ENV`, defaulting to `development`
   - `MARKET_DATA_PROVIDER`, defaulting to `alpha-vantage`
   - `ALPHA_VANTAGE_API_KEY`
-  - `ALPHA_VANTAGE_BASE_URL`
 - `apps/api` scripts use Node's native `--env-file=.env` flag, so run package scripts through pnpm from the workspace rather than starting source files ad hoc.
 
 ## Coding Conventions

@@ -22,5 +22,4 @@ export default {
   marketDataProvider: getMarketDataProvider(),
 
   alphaVantageApiKey: requireEnv("ALPHA_VANTAGE_API_KEY"),
-  alphaVantageBaseUrl: requireEnv("ALPHA_VANTAGE_BASE_URL"),
 };

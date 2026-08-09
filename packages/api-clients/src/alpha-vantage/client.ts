@@ -10,9 +10,10 @@ import type {
 } from "@financial-dashboard/api-contracts/market-data";
 import type { MarketDataClient } from "../market-data/index.js";
 
+const ALPHA_VANTAGE_BASE_URL = "https://www.alphavantage.co/query";
+
 export type AlphaVantageClientOptions = {
   apiKey: string;
-  baseUrl: string;
 };
 
 export function createAlphaVantageClient(
@@ -29,7 +30,7 @@ async function fetchCompanyOverview(
   options: AlphaVantageClientOptions,
   symbol: string,
 ): Promise<CompanyOverview | null> {
-  const url = new URL(options.baseUrl);
+  const url = new URL(ALPHA_VANTAGE_BASE_URL);
   url.searchParams.set("function", "OVERVIEW");
   url.searchParams.set("symbol", symbol);
   url.searchParams.set("apikey", options.apiKey);
@@ -71,7 +72,7 @@ async function searchSymbols(
   options: AlphaVantageClientOptions,
   keywords: string,
 ): Promise<SymbolSearchResult[]> {
-  const url = new URL(options.baseUrl);
+  const url = new URL(ALPHA_VANTAGE_BASE_URL);
   url.searchParams.set("function", "SYMBOL_SEARCH");
   url.searchParams.set("keywords", keywords.trim());
   url.searchParams.set("apikey", options.apiKey);

@@ -7,7 +7,6 @@ function configureMarketDataClient(): MarketDataClient {
     case "alpha-vantage":
       return createAlphaVantageClient({
         apiKey: config.alphaVantageApiKey,
-        baseUrl: config.alphaVantageBaseUrl,
       });
     default:
       throw new Error(
