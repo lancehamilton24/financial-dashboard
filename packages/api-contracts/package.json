@@ -1,0 +1,17 @@
+{
+  "name": "@financial-dashboard/api-contracts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./market-data": {
+      "types": "./src/market-data/index.ts",
+      "default": "./dist/market-data/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src"
+  }
+}
