@@ -15,4 +15,8 @@ export default [
       },
     },
   },
+  {
+    files: ["apps/web/**/*.{ts,tsx}"],
+    languageOptions: { globals: { ...globals.browser } },
+  },
 ];
