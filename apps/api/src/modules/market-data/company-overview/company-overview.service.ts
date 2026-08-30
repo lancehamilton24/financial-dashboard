@@ -1,11 +1,16 @@
-import type { CompanyOverview } from "@financial-dashboard/api-contracts/market-data";
-import { marketDataClient } from "../../../configured-api-clients.js";
+import type {
+  CompanyOverview,
+  MarketDataProvider,
+} from "@financial-dashboard/api-contracts/market-data";
+import { getMarketDataClient } from "../../../configured-api-clients.js";
 import { normalizeSymbol } from "../shared/symbol.js";
 
 export async function getCompanyOverview(
   symbol: string,
+  provider: MarketDataProvider,
 ): Promise<CompanyOverview | null> {
   const normalizedSymbol = normalizeSymbol(symbol);
+  const marketDataClient = getMarketDataClient(provider);
 
   const overview =
     await marketDataClient.fetchCompanyOverview(normalizedSymbol);

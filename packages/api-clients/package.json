@@ -11,6 +11,10 @@
     "./alpha-vantage": {
       "types": "./src/alpha-vantage/index.ts",
       "default": "./dist/alpha-vantage/index.js"
+    },
+    "./financial-modeling-prep": {
+      "types": "./src/financial-modeling-prep/index.ts",
+      "default": "./dist/financial-modeling-prep/index.js"
     }
   },
   "scripts": {

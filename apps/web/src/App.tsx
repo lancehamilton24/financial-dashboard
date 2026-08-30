@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import type { CompanyOverview, SymbolSearchResult } from "@financial-dashboard/api-contracts/market-data";
+import type { CompanyOverview, MarketDataProvider, SymbolSearchResult } from "@financial-dashboard/api-contracts/market-data";
 import { ApiError, fetchCompanyOverview, searchSymbols } from "./api/market-data";
 import { CompanyOverviewCard } from "./components/CompanyOverviewCard";
 import { SearchBox } from "./components/SearchBox";
@@ -7,6 +7,7 @@ import { StatusMessage } from "./components/StatusMessage";
 
 export function App() {
   const [query, setQuery] = useState("");
+  const [provider, setProvider] = useState<MarketDataProvider>("alpha-vantage");
   const [results, setResults] = useState<SymbolSearchResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -31,7 +32,7 @@ export function App() {
     setIsSearching(true); setSearchError(null); setSearched(false);
 
     try {
-      const matches = await searchSymbols(keywords, controller.signal);
+      const matches = await searchSymbols(keywords, provider, controller.signal);
       setResults(matches);
       setActiveIndex(matches.length ? 0 : -1);
     } catch (error) {
@@ -51,6 +52,15 @@ export function App() {
     setSearchError(null); setSearched(false);
   }
 
+  function handleProviderChange(value: MarketDataProvider) {
+    searchRequest.current?.abort();
+    overviewRequest.current?.abort();
+    setProvider(value); setResults([]); setActiveIndex(-1);
+    setSearchError(null); setSearched(false); setIsSearching(false);
+    setSelectedCompany(null); setOverview(null); setOverviewError(null);
+    setIsLoadingOverview(false);
+  }
+
   async function handleSelect(company: SymbolSearchResult) {
     overviewRequest.current?.abort();
     const controller = new AbortController();
@@ -58,7 +68,7 @@ export function App() {
     setSelectedCompany(company); setQuery(""); setResults([]); setSearchError(null); setSearched(false);
     setOverviewError(null); setIsLoadingOverview(true);
     try {
-      setOverview(await fetchCompanyOverview(company.symbol, controller.signal));
+      setOverview(await fetchCompanyOverview(company.symbol, provider, controller.signal));
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
       setOverviewError(error instanceof ApiError && error.status === 404 ? `No overview is available for ${company.symbol}.` : "We couldn't load this company. Please try again.");
@@ -70,7 +80,7 @@ export function App() {
   return <main><div className="page-shell">
     <header className="site-header"><a className="brand" href="/" aria-label="Financial Dashboard home"><span className="brand-mark" aria-hidden="true"><span /><span /><span /></span>Financial Dashboard</a></header>
     <section className="hero" aria-labelledby="page-title">
-      <SearchBox activeIndex={activeIndex} error={searchError} isLoading={isSearching} onActiveIndexChange={setActiveIndex} onQueryChange={handleQueryChange} onSearch={handleSearch} onSelect={handleSelect} query={query} results={results} searched={searched} />
+      <SearchBox activeIndex={activeIndex} error={searchError} isLoading={isSearching} onActiveIndexChange={setActiveIndex} onProviderChange={handleProviderChange} onQueryChange={handleQueryChange} onSearch={handleSearch} onSelect={handleSelect} provider={provider} query={query} results={results} searched={searched} />
     </section>
     <section className="overview-region" aria-live="polite">
       {isLoadingOverview && <div className="overview-loading"><span className="spinner" /> Loading {selectedCompany?.symbol}…</div>}

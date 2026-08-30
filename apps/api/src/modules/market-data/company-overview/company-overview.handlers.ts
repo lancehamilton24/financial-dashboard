@@ -1,13 +1,22 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { getCompanyOverview } from "./company-overview.service.js";
-import type { CompanyOverviewParams } from "./company-overview.types.js";
+import type {
+  CompanyOverviewParams,
+  CompanyOverviewQuery,
+} from "./company-overview.types.js";
 
 export async function getCompanyOverviewHandler(
-  request: FastifyRequest<{ Params: CompanyOverviewParams }>,
+  request: FastifyRequest<{
+    Params: CompanyOverviewParams;
+    Querystring: CompanyOverviewQuery;
+  }>,
   reply: FastifyReply,
 ) {
   try {
-    const overview = await getCompanyOverview(request.params.symbol);
+    const overview = await getCompanyOverview(
+      request.params.symbol,
+      request.query.provider,
+    );
 
     if (!overview) {
       return reply.code(404).send("Company overview not found");

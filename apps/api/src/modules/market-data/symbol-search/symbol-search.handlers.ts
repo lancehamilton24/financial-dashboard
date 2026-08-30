@@ -7,7 +7,10 @@ export async function searchSymbolsHandler(
   reply: FastifyReply,
 ) {
   try {
-    const results = await getSymbolSearchResults(request.query.keywords);
+    const results = await getSymbolSearchResults(
+      request.query.keywords,
+      request.query.provider,
+    );
 
     if (!results) {
       return reply
