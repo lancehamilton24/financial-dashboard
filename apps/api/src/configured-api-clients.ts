@@ -9,9 +9,7 @@ const marketDataClients: Partial<Record<MarketDataProvider, MarketDataClient>> =
     ? createAlphaVantageClient({ apiKey: config.alphaVantageApiKey })
     : undefined,
   "financial-modeling-prep": config.financialModelingPrepApiKey
-    ? createFinancialModelingPrepClient({
-        apiKey: config.financialModelingPrepApiKey,
-      })
+    ? createFinancialModelingPrepClient({ apiKey: config.financialModelingPrepApiKey })
     : undefined,
 };
 

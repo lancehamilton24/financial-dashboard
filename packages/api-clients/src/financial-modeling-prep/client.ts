@@ -15,7 +15,6 @@ const FINANCIAL_MODELING_PREP_BASE_URL =
 
 export type FinancialModelingPrepClientOptions = {
   apiKey: string;
-  baseUrl?: string;
 };
 
 export function createFinancialModelingPrepClient(
@@ -74,7 +73,7 @@ function createUrl(
   options: FinancialModelingPrepClientOptions,
   path: string,
 ): URL {
-  const baseUrl = options.baseUrl ?? FINANCIAL_MODELING_PREP_BASE_URL;
+  const baseUrl = FINANCIAL_MODELING_PREP_BASE_URL;
   const url = new URL(`${baseUrl.replace(/\/$/, "")}/${path}`);
   url.searchParams.set("apikey", options.apiKey);
   return url;
