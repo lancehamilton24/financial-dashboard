@@ -31,25 +31,10 @@ Current workspace locations are:
 - `apps/*` for deployable applications.
 - `packages/*` for shared libraries.
 
-This repo can also contain non-JavaScript projects in the future, such as .NET or Python APIs. Those projects should use their native tooling, while pnpm continues to manage JavaScript and TypeScript packages.
-
 ## Prerequisites
 
 - Node.js 20 or newer
 - pnpm 10.33.2
-
-Prefer Corepack when available so the pnpm version comes from `package.json`:
-
-```bash
-corepack enable
-corepack prepare pnpm@10.33.2 --activate
-```
-
-If Corepack is not available, install pnpm globally:
-
-```bash
-npm install -g pnpm@10.33.2
-```
 
 ## Getting Started
 
@@ -65,10 +50,10 @@ Copy the API environment examples and fill in local .env values:
 cp apps/api/.env.example apps/api/.env
 ```
 
-Start the Node API in development mode:
+Start all apps in development mode:
 
 ```bash
-pnpm run dev
+pnpm --parallel run dev
 ```
 
 ## Common Commands
@@ -88,78 +73,7 @@ pnpm run lint
 
 # Test all packages with a test script
 pnpm run test
-
-# Run a script in a specific package
-pnpm --filter @financial-dashboard/node-api dev
-
-# Run dev scripts across packages
-pnpm --parallel run dev
 ```
-
-## Working With Dependencies
-
-Use pnpm for JavaScript and TypeScript dependency work.
-
-```bash
-# Add a dependency to a specific package
-pnpm --filter @financial-dashboard/node-api add fastify
-
-# Add a dev dependency to a specific package
-pnpm --filter @financial-dashboard/node-api add -D eslint
-
-# Add shared root tooling only
-pnpm add -w some-tool
-
-# Remove a dependency from a specific package
-pnpm --filter @financial-dashboard/node-api remove axios
-```
-
-Do not create or commit `package-lock.json` or `yarn.lock`.
-
-## Environment Variables
-
-Each application package owns its own `.env` file. Commit `.env.example` files, but never commit real `.env` files.
-
-### `@financial-dashboard/node-api`
-
-| Variable                | Default         | Description                          |
-| ----------------------- | --------------- | ------------------------------------ |
-| `PORT`                  | `3001`          | Port the API listens on              |
-| `NODE_ENV`              | `development`   | Runtime environment                  |
-| `MARKET_DATA_PROVIDER`  | `alpha-vantage` | Market-data provider used by the API |
-| `ALPHA_VANTAGE_API_KEY` | none            | Alpha Vantage API key                |
-
-## Current API Package
-
-`apps/api` is an ESM Fastify REST API.
-
-- Source lives in `apps/api/src`.
-- Routes are registered under `/api`.
-- `src/app.ts` builds and configures the Fastify app.
-- `src/server.ts` starts the app.
-- Configuration reads are centralized in `src/config`.
-- Feature routes, handlers, and services live under `src/modules`.
-
-## Future Polyglot Repo Direction
-
-The repo is intentionally structured so additional implementations can live side by side:
-
-```text
-apps/web
-apps/api
-packages/api-contracts
-packages/api-clients
-```
-
-`packages/api-contracts` holds the provider-neutral types shared by the API, frontend, and external-provider clients. `packages/api-clients` retrieves and normalizes provider data into those shared types.
-
-## Adding a JavaScript Workspace Package
-
-1. Create a folder under `apps/` or `packages/`.
-2. Run `pnpm init` inside it.
-3. Set `"private": true`.
-4. Use a scoped package name such as `@financial-dashboard/react-web`.
-5. Run `pnpm install` from the repo root.
 
 ## Git Hygiene
 

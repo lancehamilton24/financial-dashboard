@@ -1,3 +1,4 @@
+import { getSelectedProvider } from "./selected-provider";
 import type { CompanyOverview, SymbolSearchResults } from "@financial-dashboard/api-contracts/market-data";
 
 export class ApiError extends Error {
@@ -16,10 +17,14 @@ async function readResponse<T>(response: Response): Promise<T> {
 }
 
 export async function searchSymbols(keywords: string, signal?: AbortSignal): Promise<SymbolSearchResults> {
-  const query = new URLSearchParams({ keywords });
-  return readResponse<SymbolSearchResults>(await fetch(`/api/symbols/search?${query}`, { signal }));
+  return request<SymbolSearchResults>("/api/symbols/search", { keywords }, signal);
 }
 
 export async function fetchCompanyOverview(symbol: string, signal?: AbortSignal): Promise<CompanyOverview> {
-  return readResponse<CompanyOverview>(await fetch(`/api/companies/${encodeURIComponent(symbol)}/overview`, { signal }));
+  return request<CompanyOverview>(`/api/companies/${encodeURIComponent(symbol)}/overview`, {}, signal);
+}
+
+async function request<T>(path: string, params: Record<string, string>, signal?: AbortSignal): Promise<T> {
+  const query = new URLSearchParams({ ...params, provider: getSelectedProvider() });
+  return readResponse<T>(await fetch(`${path}?${query}`, { signal }));
 }

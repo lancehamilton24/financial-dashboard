@@ -1,18 +1,26 @@
 import { createAlphaVantageClient } from "@financial-dashboard/api-clients/alpha-vantage";
+import { createFinancialModelingPrepClient } from "@financial-dashboard/api-clients/financial-modeling-prep";
 import type { MarketDataClient } from "@financial-dashboard/api-clients/market-data";
+import type { MarketDataProvider } from "@financial-dashboard/api-contracts/market-data";
 import config from "./config/index.js";
 
-function configureMarketDataClient(): MarketDataClient {
-  switch (config.marketDataProvider) {
-    case "alpha-vantage":
-      return createAlphaVantageClient({
-        apiKey: config.alphaVantageApiKey,
-      });
-    default:
-      throw new Error(
-        `Unsupported market data provider: ${config.marketDataProvider}`,
-      );
-  }
-}
+const marketDataClients: Partial<Record<MarketDataProvider, MarketDataClient>> = {
+  "alpha-vantage": config.alphaVantageApiKey
+    ? createAlphaVantageClient({ apiKey: config.alphaVantageApiKey })
+    : undefined,
+  "financial-modeling-prep": config.financialModelingPrepApiKey
+    ? createFinancialModelingPrepClient({ apiKey: config.financialModelingPrepApiKey })
+    : undefined,
+};
 
-export const marketDataClient = configureMarketDataClient();
+export function getMarketDataClient(
+  provider: MarketDataProvider,
+): MarketDataClient {
+  const client = marketDataClients[provider];
+
+  if (!client) {
+    throw new Error(`Market data provider '${provider}' is not configured.`);
+  }
+
+  return client;
+}

@@ -1,12 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CompanyOverview, SymbolSearchResult } from "@financial-dashboard/api-contracts/market-data";
 import { ApiError, fetchCompanyOverview, searchSymbols } from "./api/market-data";
+import { setSelectedProvider, useSelectedProvider } from "./api/selected-provider";
 import { CompanyOverviewCard } from "./components/CompanyOverviewCard";
 import { SearchBox } from "./components/SearchBox";
 import { StatusMessage } from "./components/StatusMessage";
 
 export function App() {
   const [query, setQuery] = useState("");
+  const provider = useSelectedProvider();
   const [results, setResults] = useState<SymbolSearchResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -32,10 +34,11 @@ export function App() {
 
     try {
       const matches = await searchSymbols(keywords, controller.signal);
+      if (controller.signal.aborted) return;
       setResults(matches);
       setActiveIndex(matches.length ? 0 : -1);
     } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
+      if (controller.signal.aborted) return;
       if (error instanceof ApiError && error.status === 404) {
         setResults([]);
       } else {
@@ -51,6 +54,15 @@ export function App() {
     setSearchError(null); setSearched(false);
   }
 
+  useEffect(() => {
+    searchRequest.current?.abort();
+    overviewRequest.current?.abort();
+    setResults([]); setActiveIndex(-1);
+    setSearchError(null); setSearched(false); setIsSearching(false);
+    setSelectedCompany(null); setOverview(null); setOverviewError(null);
+    setIsLoadingOverview(false);
+  }, [provider]);
+
   async function handleSelect(company: SymbolSearchResult) {
     overviewRequest.current?.abort();
     const controller = new AbortController();
@@ -58,9 +70,10 @@ export function App() {
     setSelectedCompany(company); setQuery(""); setResults([]); setSearchError(null); setSearched(false);
     setOverviewError(null); setIsLoadingOverview(true);
     try {
-      setOverview(await fetchCompanyOverview(company.symbol, controller.signal));
+      const nextOverview = await fetchCompanyOverview(company.symbol, controller.signal);
+      if (!controller.signal.aborted) setOverview(nextOverview);
     } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
+      if (controller.signal.aborted) return;
       setOverviewError(error instanceof ApiError && error.status === 404 ? `No overview is available for ${company.symbol}.` : "We couldn't load this company. Please try again.");
     } finally {
       if (!controller.signal.aborted) setIsLoadingOverview(false);
@@ -68,7 +81,19 @@ export function App() {
   }
 
   return <main><div className="page-shell">
-    <header className="site-header"><a className="brand" href="/" aria-label="Financial Dashboard home"><span className="brand-mark" aria-hidden="true"><span /><span /><span /></span>Financial Dashboard</a></header>
+    <header className="site-header"><a className="brand" href="/" aria-label="Financial Dashboard home"><span className="brand-mark" aria-hidden="true"><span /><span /><span /></span>Financial Dashboard</a>
+      <div className="client-selector">
+        <label htmlFor="market-data-provider">API client</label>
+        <select id="market-data-provider" value={provider} onChange={(event) => {
+          searchRequest.current?.abort();
+          overviewRequest.current?.abort();
+          setSelectedProvider(event.target.value as typeof provider);
+        }}>
+          <option value="alpha-vantage">Alpha Vantage</option>
+          <option value="financial-modeling-prep" disabled>Financial Modeling Prep (unavailable)</option>
+        </select>
+      </div>
+    </header>
     <section className="hero" aria-labelledby="page-title">
       <SearchBox activeIndex={activeIndex} error={searchError} isLoading={isSearching} onActiveIndexChange={setActiveIndex} onQueryChange={handleQueryChange} onSearch={handleSearch} onSelect={handleSelect} query={query} results={results} searched={searched} />
     </section>
