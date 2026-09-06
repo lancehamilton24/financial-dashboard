@@ -90,7 +90,7 @@ export function App() {
           setSelectedProvider(event.target.value as typeof provider);
         }}>
           <option value="alpha-vantage">Alpha Vantage</option>
-          <option value="financial-modeling-prep">Financial Modeling Prep</option>
+          <option value="financial-modeling-prep" disabled>Financial Modeling Prep (unavailable)</option>
         </select>
       </div>
     </header>
