@@ -1,4 +1,5 @@
-import type { CompanyOverview, MarketDataProvider, SymbolSearchResults } from "@financial-dashboard/api-contracts/market-data";
+import { getSelectedProvider } from "./selected-provider";
+import type { CompanyOverview, SymbolSearchResults } from "@financial-dashboard/api-contracts/market-data";
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) {
@@ -15,12 +16,15 @@ async function readResponse<T>(response: Response): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function searchSymbols(keywords: string, provider: MarketDataProvider, signal?: AbortSignal): Promise<SymbolSearchResults> {
-  const query = new URLSearchParams({ keywords, provider });
-  return readResponse<SymbolSearchResults>(await fetch(`/api/symbols/search?${query}`, { signal }));
+export async function searchSymbols(keywords: string, signal?: AbortSignal): Promise<SymbolSearchResults> {
+  return request<SymbolSearchResults>("/api/symbols/search", { keywords }, signal);
 }
 
-export async function fetchCompanyOverview(symbol: string, provider: MarketDataProvider, signal?: AbortSignal): Promise<CompanyOverview> {
-  const query = new URLSearchParams({ provider });
-  return readResponse<CompanyOverview>(await fetch(`/api/companies/${encodeURIComponent(symbol)}/overview?${query}`, { signal }));
+export async function fetchCompanyOverview(symbol: string, signal?: AbortSignal): Promise<CompanyOverview> {
+  return request<CompanyOverview>(`/api/companies/${encodeURIComponent(symbol)}/overview`, {}, signal);
+}
+
+async function request<T>(path: string, params: Record<string, string>, signal?: AbortSignal): Promise<T> {
+  const query = new URLSearchParams({ ...params, provider: getSelectedProvider() });
+  return readResponse<T>(await fetch(`${path}?${query}`, { signal }));
 }
