@@ -7,6 +7,7 @@ import type {
   FinancialStatement,
   FinancialStatementType,
 } from "@financial-dashboard/api-contracts/market-data";
+import type { AlphaVantageRequest } from "./request.js";
 
 const functions: Record<FinancialStatementType, string> = {
   "income-statement": "INCOME_STATEMENT",
@@ -15,29 +16,13 @@ const functions: Record<FinancialStatementType, string> = {
 };
 
 export async function fetchFinancialStatement(
-  apiKey: string,
+  request: AlphaVantageRequest,
   symbol: string,
   type: FinancialStatementType,
 ): Promise<FinancialStatement | null> {
-  const url = new URL("https://www.alphavantage.co/query");
-  url.search = new URLSearchParams({
-    function: functions[type],
-    symbol,
-    apikey: apiKey,
-  }).toString();
-  const response = await fetch(url);
-  if (!response.ok)
-    throw new Error(
-      `Alpha Vantage statement request failed with status ${response.status}.`,
-    );
-  const body: unknown = await response.json();
+  const body = await request(functions[type], { symbol });
   if (body && typeof body === "object" && !Array.isArray(body)) {
     if (Object.keys(body).length === 0) return null;
-    if ("Note" in body || "Information" in body || "Error Message" in body) {
-      throw new Error(
-        "Alpha Vantage could not provide this statement. Check provider availability and API limits.",
-      );
-    }
   }
   const result = alphaVantageFinancialStatementSchema.safeParse(body);
   if (!result.success)

@@ -24,7 +24,7 @@ export function App() {
 
   async function handleSearch() {
     const keywords = query.trim();
-    if (!keywords || selectedCompany?.name === query || isSearching) {
+    if (!keywords || isSearching) {
       return;
     }
 
@@ -51,7 +51,9 @@ export function App() {
   }
 
   function handleQueryChange(value: string) {
-    setQuery(value); setSelectedCompany(null); setResults([]); setActiveIndex(-1);
+    searchRequest.current?.abort();
+    setIsSearching(false);
+    setQuery(value); setResults([]); setActiveIndex(-1);
     setSearchError(null); setSearched(false);
   }
 
@@ -65,6 +67,8 @@ export function App() {
   }, [provider]);
 
   async function handleSelect(company: SymbolSearchResult) {
+    searchRequest.current?.abort();
+    setIsSearching(false);
     overviewRequest.current?.abort();
     const controller = new AbortController();
     overviewRequest.current = controller;
@@ -76,7 +80,7 @@ export function App() {
       if (!controller.signal.aborted) setOverview(nextOverview);
     } catch (error) {
       if (controller.signal.aborted) return;
-      setOverviewError(error instanceof ApiError && error.status === 404 ? `No overview is available for ${company.symbol}.` : "We couldn't load this company. Please try again.");
+      setOverviewError(error instanceof ApiError && error.status === 404 ? `No overview is available for ${company.symbol}.` : error instanceof ApiError && error.status === 502 ? error.message : "We couldn't load the company overview. Please try again.");
     } finally {
       if (!controller.signal.aborted) setIsLoadingOverview(false);
     }

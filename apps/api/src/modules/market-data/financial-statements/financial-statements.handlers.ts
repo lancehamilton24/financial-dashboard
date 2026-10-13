@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { AlphaVantageResponseError } from "@financial-dashboard/api-clients/alpha-vantage";
 import { getFinancialStatement } from "./financial-statements.service.js";
 import type {
   FinancialStatementParams,
@@ -34,6 +35,9 @@ export async function getFinancialStatementHandler(
     return statement;
   } catch (error) {
     request.log.error(error);
+    if (error instanceof AlphaVantageResponseError) {
+      return reply.code(502).send(error.message);
+    }
     return reply
       .code(502)
       .send(

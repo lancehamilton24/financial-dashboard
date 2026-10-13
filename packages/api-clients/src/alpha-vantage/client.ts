@@ -10,8 +10,7 @@ import type {
 } from "@financial-dashboard/api-contracts/market-data";
 import type { MarketDataClient } from "../market-data/index.js";
 import { fetchFinancialStatement } from "./financial-statements.js";
-
-const ALPHA_VANTAGE_BASE_URL = "https://www.alphavantage.co/query";
+import { createAlphaVantageRequest, type AlphaVantageRequest } from "./request.js";
 
 export type AlphaVantageClientOptions = {
   apiKey: string;
@@ -20,44 +19,24 @@ export type AlphaVantageClientOptions = {
 export function createAlphaVantageClient(
   options: AlphaVantageClientOptions,
 ): MarketDataClient {
+  const request = createAlphaVantageRequest(options.apiKey);
   return {
     fetchFinancialStatement: (symbol, type) =>
-      fetchFinancialStatement(options.apiKey, symbol, type),
+      fetchFinancialStatement(request, symbol, type),
     fetchCompanyOverview: (symbol: string) =>
-      fetchCompanyOverview(options, symbol),
-    searchSymbols: (keywords: string) => searchSymbols(options, keywords),
+      fetchCompanyOverview(request, symbol),
+    searchSymbols: (keywords: string) => searchSymbols(request, keywords),
   };
 }
 
 async function fetchCompanyOverview(
-  options: AlphaVantageClientOptions,
+  request: AlphaVantageRequest,
   symbol: string,
 ): Promise<CompanyOverview | null> {
-  const url = new URL(ALPHA_VANTAGE_BASE_URL);
-  url.searchParams.set("function", "OVERVIEW");
-  url.searchParams.set("symbol", symbol);
-  url.searchParams.set("apikey", options.apiKey);
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed with status ${response.status}.`,
-    );
-  }
-
-  const body = await response.json();
+  const body = await request("OVERVIEW", { symbol });
 
   if (isEmptyObject(body)) {
     return null;
-  }
-
-  const errorMessage = body["Error Message"] ?? body.Information;
-
-  if (errorMessage) {
-    throw new Error(
-      `[fetchCompanyOverview] Company overview GET request to Alpha Vantage failed: ${errorMessage}`,
-    );
   }
 
   const result = await alphaVantageCompanyOverviewSchema.safeParseAsync(body);
@@ -72,34 +51,13 @@ async function fetchCompanyOverview(
 }
 
 async function searchSymbols(
-  options: AlphaVantageClientOptions,
+  request: AlphaVantageRequest,
   keywords: string,
 ): Promise<SymbolSearchResult[]> {
-  const url = new URL(ALPHA_VANTAGE_BASE_URL);
-  url.searchParams.set("function", "SYMBOL_SEARCH");
-  url.searchParams.set("keywords", keywords.trim());
-  url.searchParams.set("apikey", options.apiKey);
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `[searchSymbols] Symbol search GET request to Alpha Vantage failed with status ${response.status}.`,
-    );
-  }
-
-  const body = await response.json();
+  const body = await request("SYMBOL_SEARCH", { keywords: keywords.trim() });
 
   if (isEmptyObject(body)) {
     return [];
-  }
-
-  const errorMessage = body["Error Message"] ?? body.Information;
-
-  if (errorMessage) {
-    throw new Error(
-      `[searchSymbols] Symbol search GET request to Alpha Vantage failed: ${errorMessage}`,
-    );
   }
 
   const result =
