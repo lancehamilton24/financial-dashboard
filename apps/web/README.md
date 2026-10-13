@@ -1,6 +1,6 @@
 # Financial Dashboard web application
 
-React and Vite frontend for searching companies and viewing company overviews.
+React and Vite frontend for searching companies and viewing company overviews and financial statements.
 
 Run it from the repository root with:
 

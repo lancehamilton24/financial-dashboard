@@ -4,6 +4,13 @@ export {
 } from "./company-overview.schema.js";
 
 export {
+  alphaVantageFinancialReportSchema,
+  alphaVantageFinancialStatementSchema,
+  type AlphaVantageFinancialReport,
+  type AlphaVantageFinancialStatement,
+} from "./financial-statements.schema.js";
+
+export {
   alphaVantageSymbolSearchMatchSchema,
   alphaVantageSymbolSearchResponseSchema,
   type AlphaVantageSymbolSearchMatch,

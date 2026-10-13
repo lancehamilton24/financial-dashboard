@@ -9,6 +9,7 @@ import type {
   SymbolSearchResult,
 } from "@financial-dashboard/api-contracts/market-data";
 import type { MarketDataClient } from "../market-data/index.js";
+import { fetchFinancialStatement } from "./financial-statements.js";
 
 const ALPHA_VANTAGE_BASE_URL = "https://www.alphavantage.co/query";
 
@@ -20,6 +21,8 @@ export function createAlphaVantageClient(
   options: AlphaVantageClientOptions,
 ): MarketDataClient {
   return {
+    fetchFinancialStatement: (symbol, type) =>
+      fetchFinancialStatement(options.apiKey, symbol, type),
     fetchCompanyOverview: (symbol: string) =>
       fetchCompanyOverview(options, symbol),
     searchSymbols: (keywords: string) => searchSymbols(options, keywords),

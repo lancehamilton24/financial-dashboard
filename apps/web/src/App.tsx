@@ -3,6 +3,7 @@ import type { CompanyOverview, SymbolSearchResult } from "@financial-dashboard/a
 import { ApiError, fetchCompanyOverview, searchSymbols } from "./api/market-data";
 import { setSelectedProvider, useSelectedProvider } from "./api/selected-provider";
 import { CompanyOverviewCard } from "./components/CompanyOverviewCard";
+import { FinancialStatements } from "./components/FinancialStatements";
 import { SearchBox } from "./components/SearchBox";
 import { StatusMessage } from "./components/StatusMessage";
 
@@ -69,6 +70,7 @@ export function App() {
     overviewRequest.current = controller;
     setSelectedCompany(company); setQuery(""); setResults([]); setSearchError(null); setSearched(false);
     setOverviewError(null); setIsLoadingOverview(true);
+    setOverview(null);
     try {
       const nextOverview = await fetchCompanyOverview(company.symbol, controller.signal);
       if (!controller.signal.aborted) setOverview(nextOverview);
@@ -101,6 +103,7 @@ export function App() {
       {isLoadingOverview && <div className="overview-loading"><span className="spinner" /> Loading {selectedCompany?.symbol}…</div>}
       {overviewError && <StatusMessage tone="error">{overviewError}</StatusMessage>}
       {!isLoadingOverview && !overviewError && overview && <CompanyOverviewCard overview={overview} />}
+      {selectedCompany && provider === "alpha-vantage" && <FinancialStatements key={`${provider}:${selectedCompany.symbol}`} symbol={selectedCompany.symbol} />}
     </section>
   </div></main>;
 }
