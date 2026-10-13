@@ -3,6 +3,7 @@ import type { CompanyOverview, SymbolSearchResult } from "@financial-dashboard/a
 import { ApiError, fetchCompanyOverview, searchSymbols } from "./api/market-data";
 import { setSelectedProvider, useSelectedProvider } from "./api/selected-provider";
 import { CompanyOverviewCard } from "./components/CompanyOverviewCard";
+import { FinancialStatements } from "./components/FinancialStatements";
 import { SearchBox } from "./components/SearchBox";
 import { StatusMessage } from "./components/StatusMessage";
 
@@ -23,7 +24,7 @@ export function App() {
 
   async function handleSearch() {
     const keywords = query.trim();
-    if (!keywords || selectedCompany?.name === query || isSearching) {
+    if (!keywords || isSearching) {
       return;
     }
 
@@ -50,7 +51,9 @@ export function App() {
   }
 
   function handleQueryChange(value: string) {
-    setQuery(value); setSelectedCompany(null); setResults([]); setActiveIndex(-1);
+    searchRequest.current?.abort();
+    setIsSearching(false);
+    setQuery(value); setResults([]); setActiveIndex(-1);
     setSearchError(null); setSearched(false);
   }
 
@@ -64,17 +67,20 @@ export function App() {
   }, [provider]);
 
   async function handleSelect(company: SymbolSearchResult) {
+    searchRequest.current?.abort();
+    setIsSearching(false);
     overviewRequest.current?.abort();
     const controller = new AbortController();
     overviewRequest.current = controller;
     setSelectedCompany(company); setQuery(""); setResults([]); setSearchError(null); setSearched(false);
     setOverviewError(null); setIsLoadingOverview(true);
+    setOverview(null);
     try {
       const nextOverview = await fetchCompanyOverview(company.symbol, controller.signal);
       if (!controller.signal.aborted) setOverview(nextOverview);
     } catch (error) {
       if (controller.signal.aborted) return;
-      setOverviewError(error instanceof ApiError && error.status === 404 ? `No overview is available for ${company.symbol}.` : "We couldn't load this company. Please try again.");
+      setOverviewError(error instanceof ApiError && error.status === 404 ? `No overview is available for ${company.symbol}.` : error instanceof ApiError && error.status === 502 ? error.message : "We couldn't load the company overview. Please try again.");
     } finally {
       if (!controller.signal.aborted) setIsLoadingOverview(false);
     }
@@ -101,6 +107,7 @@ export function App() {
       {isLoadingOverview && <div className="overview-loading"><span className="spinner" /> Loading {selectedCompany?.symbol}…</div>}
       {overviewError && <StatusMessage tone="error">{overviewError}</StatusMessage>}
       {!isLoadingOverview && !overviewError && overview && <CompanyOverviewCard overview={overview} />}
+      {selectedCompany && provider === "alpha-vantage" && <FinancialStatements key={`${provider}:${selectedCompany.symbol}`} symbol={selectedCompany.symbol} />}
     </section>
   </div></main>;
 }

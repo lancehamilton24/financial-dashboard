@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { AlphaVantageResponseError } from "@financial-dashboard/api-clients/alpha-vantage";
 import { getCompanyOverview } from "./company-overview.service.js";
 import type {
   CompanyOverviewParams,
@@ -25,6 +26,9 @@ export async function getCompanyOverviewHandler(
     return overview;
   } catch (error) {
     request.log.error(error);
+    if (error instanceof AlphaVantageResponseError) {
+      return reply.code(502).send(error.message);
+    }
     return reply
       .code(500)
       .send("An unexpected error occurred while fetching company overview.");

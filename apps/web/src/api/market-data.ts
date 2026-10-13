@@ -1,5 +1,5 @@
 import { getSelectedProvider } from "./selected-provider";
-import type { CompanyOverview, SymbolSearchResults } from "@financial-dashboard/api-contracts/market-data";
+import type { CompanyOverview, SymbolSearchResults, FinancialStatement, FinancialStatementType } from "@financial-dashboard/api-contracts/market-data";
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) {
@@ -22,6 +22,10 @@ export async function searchSymbols(keywords: string, signal?: AbortSignal): Pro
 
 export async function fetchCompanyOverview(symbol: string, signal?: AbortSignal): Promise<CompanyOverview> {
   return request<CompanyOverview>(`/api/companies/${encodeURIComponent(symbol)}/overview`, {}, signal);
+}
+
+export async function fetchFinancialStatement(symbol: string, type: FinancialStatementType, signal?: AbortSignal): Promise<FinancialStatement> {
+  return request<FinancialStatement>(`/api/companies/${encodeURIComponent(symbol)}/statements/${type}`, {}, signal);
 }
 
 async function request<T>(path: string, params: Record<string, string>, signal?: AbortSignal): Promise<T> {
