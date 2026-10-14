@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const financialModelingPrepCompanyProfileSchema = z.object({
   symbol: z.string(),
+  price: z.number().nullish(),
   companyName: z.string(),
   description: z.string().nullish().default(""),
   exchange: z.string().nullish().default(""),

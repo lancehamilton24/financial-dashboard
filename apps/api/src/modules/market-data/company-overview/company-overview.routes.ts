@@ -15,11 +15,12 @@ export async function companyOverviewRoutes(fastify: FastifyInstance) {
       schema: {
         querystring: {
           type: "object",
-          required: ["provider"],
+
           properties: {
             provider: {
               type: "string",
               enum: ["alpha-vantage", "financial-modeling-prep"],
+              default: "financial-modeling-prep",
             },
           },
         },

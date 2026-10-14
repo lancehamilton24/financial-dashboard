@@ -3,11 +3,12 @@ import type { MarketDataProvider } from "@financial-dashboard/api-contracts/mark
 
 const storageKey = "financial-dashboard.market-data-provider";
 const listeners = new Set<() => void>();
-let provider: MarketDataProvider = "alpha-vantage";
+let provider: MarketDataProvider = "financial-modeling-prep";
 
 try {
   const saved = localStorage.getItem(storageKey);
-  if (saved === "alpha-vantage") provider = saved;
+  if (saved === "alpha-vantage" || saved === "financial-modeling-prep")
+    provider = saved;
 } catch {
   // The selection still works when browser storage is unavailable.
 }
@@ -17,7 +18,6 @@ export function getSelectedProvider(): MarketDataProvider {
 }
 
 export function setSelectedProvider(value: MarketDataProvider) {
-  if (value === "financial-modeling-prep") return;
   provider = value;
   try {
     localStorage.setItem(storageKey, value);
@@ -29,7 +29,9 @@ export function setSelectedProvider(value: MarketDataProvider) {
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
-  return () => { listeners.delete(listener); };
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
 export function useSelectedProvider() {

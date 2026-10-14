@@ -4,6 +4,7 @@ import type {
   FinancialStatementType,
 } from "@financial-dashboard/api-contracts/market-data";
 import { ApiError, fetchFinancialStatement } from "../api/market-data";
+import { useSelectedProvider } from "../api/selected-provider";
 import { StatusMessage } from "./StatusMessage";
 
 const statements: {
@@ -77,6 +78,7 @@ function amount(value: number | null | undefined) {
 }
 
 export function FinancialStatements({ symbol }: { symbol: string }) {
+  const provider = useSelectedProvider();
   const [active, setActive] =
     useState<FinancialStatementType>("income-statement");
   const [period, setPeriod] = useState<"annualReports" | "quarterlyReports">(
@@ -265,7 +267,7 @@ export function FinancialStatements({ symbol }: { symbol: string }) {
               </table>
             </div>
             <p className="statement-note">
-              Source: Alpha Vantage · Latest {reports.length} reported periods
+              Source: {provider === "financial-modeling-prep" ? "Financial Modeling Prep" : "Alpha Vantage"} · Latest {reports.length} reported periods
             </p>
           </>
         )}

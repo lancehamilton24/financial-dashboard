@@ -9,12 +9,13 @@ export async function symbolSearchRoutes(fastify: FastifyInstance) {
       schema: {
         querystring: {
           type: "object",
-          required: ["keywords", "provider"],
+          required: ["keywords"],
           properties: {
             keywords: { type: "string", minLength: 1 },
             provider: {
               type: "string",
               enum: ["alpha-vantage", "financial-modeling-prep"],
+              default: "financial-modeling-prep",
             },
           },
         },

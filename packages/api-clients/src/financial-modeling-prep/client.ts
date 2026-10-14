@@ -1,3 +1,9 @@
+import { fetchOverviewMetrics } from "./overview-metrics.js";
+import {
+  createFinancialModelingPrepRequest,
+  type FinancialModelingPrepRequest,
+} from "./request.js";
+import { fetchFinancialStatement } from "./financial-statements.js";
 import type {
   CompanyOverview,
   SymbolSearchResult,
@@ -10,9 +16,6 @@ import {
   financialModelingPrepSymbolSearchResponseSchema,
 } from "./schemas/index.js";
 
-const FINANCIAL_MODELING_PREP_BASE_URL =
-  "https://financialmodelingprep.com/stable";
-
 export type FinancialModelingPrepClientOptions = {
   apiKey: string;
 };
@@ -20,24 +23,22 @@ export type FinancialModelingPrepClientOptions = {
 export function createFinancialModelingPrepClient(
   options: FinancialModelingPrepClientOptions,
 ): MarketDataClient {
+  const request = createFinancialModelingPrepRequest(options.apiKey);
   return {
-    fetchCompanyOverview: (symbol) => fetchCompanyOverview(options, symbol),
-    searchSymbols: (keywords) => searchSymbols(options, keywords),
+    fetchFinancialStatement: (symbol, type) =>
+      fetchFinancialStatement(request, symbol, type),
+    fetchCompanyOverview: (symbol) => fetchCompanyOverview(request, symbol),
+    searchSymbols: (keywords) => searchSymbols(request, keywords),
   };
 }
 
 async function fetchCompanyOverview(
-  options: FinancialModelingPrepClientOptions,
+  request: FinancialModelingPrepRequest,
   symbol: string,
 ): Promise<CompanyOverview | null> {
-  const url = createUrl(options, "profile");
-  url.searchParams.set("symbol", symbol.trim());
-
-  const body = await request(url, "fetchCompanyOverview");
+  const body = await request("profile", { symbol: symbol.trim() });
   const result =
-    await financialModelingPrepCompanyProfileResponseSchema.safeParseAsync(
-      body,
-    );
+    financialModelingPrepCompanyProfileResponseSchema.safeParse(body);
 
   if (!result.success) {
     throw new Error(
@@ -46,19 +47,22 @@ async function fetchCompanyOverview(
   }
 
   const profile = result.data[0];
-  return profile ? toCompanyOverview(profile) : null;
+  if (!profile) return null;
+  const metrics = await fetchOverviewMetrics(
+    request,
+    profile.symbol,
+    profile.price,
+  );
+  return { ...toCompanyOverview(profile), ...metrics };
 }
 
 async function searchSymbols(
-  options: FinancialModelingPrepClientOptions,
+  request: FinancialModelingPrepRequest,
   keywords: string,
 ): Promise<SymbolSearchResult[]> {
-  const url = createUrl(options, "search-symbol");
-  url.searchParams.set("query", keywords.trim());
-
-  const body = await request(url, "searchSymbols");
+  const body = await request("search-symbol", { query: keywords.trim() });
   const result =
-    await financialModelingPrepSymbolSearchResponseSchema.safeParseAsync(body);
+    financialModelingPrepSymbolSearchResponseSchema.safeParse(body);
 
   if (!result.success) {
     throw new Error(
@@ -67,42 +71,6 @@ async function searchSymbols(
   }
 
   return result.data.map(toSymbolSearchResult);
-}
-
-function createUrl(
-  options: FinancialModelingPrepClientOptions,
-  path: string,
-): URL {
-  const baseUrl = FINANCIAL_MODELING_PREP_BASE_URL;
-  const url = new URL(`${baseUrl.replace(/\/$/, "")}/${path}`);
-  url.searchParams.set("apikey", options.apiKey);
-  return url;
-}
-
-async function request(url: URL, operation: string): Promise<unknown> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(
-      `[${operation}] GET request to Financial Modeling Prep failed with status ${response.status}.`,
-    );
-  }
-
-  const body: unknown = await response.json();
-  if (isErrorResponse(body)) {
-    throw new Error(
-      `[${operation}] GET request to Financial Modeling Prep failed: ${body.message}.`,
-    );
-  }
-  return body;
-}
-
-function isErrorResponse(value: unknown): value is { message: string } {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "message" in value &&
-    typeof value.message === "string"
-  );
 }
 
 function toCompanyOverview(

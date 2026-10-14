@@ -96,7 +96,7 @@ export function App() {
           setSelectedProvider(event.target.value as typeof provider);
         }}>
           <option value="alpha-vantage">Alpha Vantage</option>
-          <option value="financial-modeling-prep" disabled>Financial Modeling Prep (unavailable)</option>
+          <option value="financial-modeling-prep">Financial Modeling Prep</option>
         </select>
       </div>
     </header>
@@ -107,7 +107,7 @@ export function App() {
       {isLoadingOverview && <div className="overview-loading"><span className="spinner" /> Loading {selectedCompany?.symbol}…</div>}
       {overviewError && <StatusMessage tone="error">{overviewError}</StatusMessage>}
       {!isLoadingOverview && !overviewError && overview && <CompanyOverviewCard overview={overview} />}
-      {selectedCompany && provider === "alpha-vantage" && <FinancialStatements key={`${provider}:${selectedCompany.symbol}`} symbol={selectedCompany.symbol} />}
+      {selectedCompany && <FinancialStatements key={`${provider}:${selectedCompany.symbol}`} symbol={selectedCompany.symbol} />}
     </section>
   </div></main>;
 }
