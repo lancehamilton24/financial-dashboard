@@ -1,3 +1,4 @@
+import { mapFinancialValues } from "../shared/financial-statements.js";
 import {
   financialModelingPrepFinancialStatementSchema,
   type FinancialModelingPrepFinancialReport,
@@ -15,41 +16,53 @@ const paths: Record<FinancialStatementType, string> = {
   "cash-flow": "cash-flow-statement",
 };
 
-// Translate provider field names to the shared dashboard metrics.
-const aliases: Record<string, string> = {
-  revenue: "totalRevenue",
-  researchAndDevelopmentExpenses: "researchAndDevelopment",
-  sellingGeneralAndAdministrativeExpenses: "sellingGeneralAndAdministrative",
-  cashAndCashEquivalents: "cashAndCashEquivalentsAtCarryingValue",
-  netReceivables: "currentNetReceivables",
-  propertyPlantEquipmentNet: "propertyPlantEquipment",
-  accountPayables: "currentAccountsPayable",
-  totalDebt: "shortLongTermDebtTotal",
-  totalStockholdersEquity: "totalShareholderEquity",
-  depreciationAndAmortization: "depreciationDepletionAndAmortization",
-  accountsReceivables: "changeInReceivables",
-  operatingCashFlow: "operatingCashflow",
-  capitalExpenditure: "capitalExpenditures",
-  netCashProvidedByInvestingActivities: "cashflowFromInvestment",
-  netCashProvidedByFinancingActivities: "cashflowFromFinancing",
-  netDividendsPaid: "dividendPayout",
-  commonStockRepurchased: "paymentsForRepurchaseOfCommonStock",
-  netChangeInCash: "changeInCashAndCashEquivalents",
+// Shared output metric -> provider field. Only these fields are returned.
+const statementFields: Record<
+  FinancialStatementType,
+  Record<string, string>
+> = {
+  "income-statement": {
+    totalRevenue: "revenue",
+    costOfRevenue: "costOfRevenue",
+    grossProfit: "grossProfit",
+    researchAndDevelopment: "researchAndDevelopmentExpenses",
+    sellingGeneralAndAdministrative: "sellingGeneralAndAdministrativeExpenses",
+    operatingExpenses: "operatingExpenses",
+    operatingIncome: "operatingIncome",
+    ebitda: "ebitda",
+    interestExpense: "interestExpense",
+    incomeBeforeTax: "incomeBeforeTax",
+    incomeTaxExpense: "incomeTaxExpense",
+    netIncome: "netIncome",
+  },
+  "balance-sheet": {
+    cashAndCashEquivalentsAtCarryingValue: "cashAndCashEquivalents",
+    currentNetReceivables: "netReceivables",
+    inventory: "inventory",
+    totalCurrentAssets: "totalCurrentAssets",
+    propertyPlantEquipment: "propertyPlantEquipmentNet",
+    totalAssets: "totalAssets",
+    currentAccountsPayable: "accountPayables",
+    totalCurrentLiabilities: "totalCurrentLiabilities",
+    shortLongTermDebtTotal: "totalDebt",
+    totalLiabilities: "totalLiabilities",
+    retainedEarnings: "retainedEarnings",
+    totalShareholderEquity: "totalStockholdersEquity",
+  },
+  "cash-flow": {
+    netIncome: "netIncome",
+    depreciationDepletionAndAmortization: "depreciationAndAmortization",
+    changeInReceivables: "accountsReceivables",
+    changeInInventory: "inventory",
+    operatingCashflow: "operatingCashFlow",
+    capitalExpenditures: "capitalExpenditure",
+    cashflowFromInvestment: "netCashProvidedByInvestingActivities",
+    cashflowFromFinancing: "netCashProvidedByFinancingActivities",
+    dividendPayout: "netDividendsPaid",
+    paymentsForRepurchaseOfCommonStock: "commonStockRepurchased",
+    changeInCashAndCashEquivalents: "netChangeInCash",
+  },
 };
-const metadata = new Set([
-  "symbol",
-  "date",
-  "reportedCurrency",
-  "cik",
-  "filingDate",
-  "fillingDate",
-  "acceptedDate",
-  "fiscalYear",
-  "calendarYear",
-  "period",
-  "link",
-  "finalLink",
-]);
 
 export async function fetchFinancialStatement(
   request: FinancialModelingPrepRequest,
@@ -84,25 +97,10 @@ function normalizeReport(
   report: FinancialModelingPrepFinancialReport,
   type: FinancialStatementType,
 ): FinancialReport {
-  const values: Record<string, number | null> = {};
-  for (const [key, value] of Object.entries(report)) {
-    if (metadata.has(key)) continue;
-    const metric =
-      type === "cash-flow" && key === "inventory"
-        ? "changeInInventory"
-        : (aliases[key] ?? key);
-    const number =
-      typeof value === "number"
-        ? value
-        : typeof value === "string" && value.trim()
-          ? Number(value)
-          : NaN;
-    values[metric] = Number.isFinite(number) ? number : null;
-  }
   return {
     fiscalDateEnding: report.date,
     reportedCurrency: report.reportedCurrency,
-    values,
+    values: mapFinancialValues(report, statementFields[type]),
   };
 }
 
