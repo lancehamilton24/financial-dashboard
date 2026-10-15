@@ -10,7 +10,10 @@ import type {
 } from "@financial-dashboard/api-contracts/market-data";
 import type { MarketDataClient } from "../market-data/index.js";
 import { fetchFinancialStatement } from "./financial-statements.js";
-import { createAlphaVantageRequest, type AlphaVantageRequest } from "./request.js";
+import {
+  createAlphaVantageRequest,
+  type AlphaVantageRequest,
+} from "./request.js";
 
 export type AlphaVantageClientOptions = {
   apiKey: string;
@@ -39,7 +42,7 @@ async function fetchCompanyOverview(
     return null;
   }
 
-  const result = await alphaVantageCompanyOverviewSchema.safeParseAsync(body);
+  const result = alphaVantageCompanyOverviewSchema.safeParse(body);
 
   if (!result.success) {
     throw new Error(
@@ -60,8 +63,7 @@ async function searchSymbols(
     return [];
   }
 
-  const result =
-    await alphaVantageSymbolSearchResponseSchema.safeParseAsync(body);
+  const result = alphaVantageSymbolSearchResponseSchema.safeParse(body);
 
   if (!result.success) {
     throw new Error(

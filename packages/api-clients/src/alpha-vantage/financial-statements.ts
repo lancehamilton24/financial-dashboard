@@ -1,3 +1,4 @@
+import { mapFinancialValues } from "../shared/financial-statements.js";
 import {
   alphaVantageFinancialStatementSchema,
   type AlphaVantageFinancialReport,
@@ -13,6 +14,56 @@ const functions: Record<FinancialStatementType, string> = {
   "income-statement": "INCOME_STATEMENT",
   "balance-sheet": "BALANCE_SHEET",
   "cash-flow": "CASH_FLOW",
+};
+
+// Shared output metric -> provider field. Only these fields are returned.
+const statementFields: Record<
+  FinancialStatementType,
+  Record<string, string>
+> = {
+  "income-statement": {
+    totalRevenue: "totalRevenue",
+    costOfRevenue: "costOfRevenue",
+    grossProfit: "grossProfit",
+    researchAndDevelopment: "researchAndDevelopment",
+    sellingGeneralAndAdministrative: "sellingGeneralAndAdministrative",
+    operatingExpenses: "operatingExpenses",
+    operatingIncome: "operatingIncome",
+    ebitda: "ebitda",
+    interestExpense: "interestExpense",
+    incomeBeforeTax: "incomeBeforeTax",
+    incomeTaxExpense: "incomeTaxExpense",
+    netIncome: "netIncome",
+  },
+  "balance-sheet": {
+    cashAndCashEquivalentsAtCarryingValue:
+      "cashAndCashEquivalentsAtCarryingValue",
+    currentNetReceivables: "currentNetReceivables",
+    inventory: "inventory",
+    totalCurrentAssets: "totalCurrentAssets",
+    propertyPlantEquipment: "propertyPlantEquipment",
+    totalAssets: "totalAssets",
+    currentAccountsPayable: "currentAccountsPayable",
+    totalCurrentLiabilities: "totalCurrentLiabilities",
+    shortLongTermDebtTotal: "shortLongTermDebtTotal",
+    totalLiabilities: "totalLiabilities",
+    retainedEarnings: "retainedEarnings",
+    totalShareholderEquity: "totalShareholderEquity",
+  },
+  "cash-flow": {
+    netIncome: "netIncome",
+    depreciationDepletionAndAmortization:
+      "depreciationDepletionAndAmortization",
+    changeInReceivables: "changeInReceivables",
+    changeInInventory: "changeInInventory",
+    operatingCashflow: "operatingCashflow",
+    capitalExpenditures: "capitalExpenditures",
+    cashflowFromInvestment: "cashflowFromInvestment",
+    cashflowFromFinancing: "cashflowFromFinancing",
+    dividendPayout: "dividendPayout",
+    paymentsForRepurchaseOfCommonStock: "paymentsForRepurchaseOfCommonStock",
+    changeInCashAndCashEquivalents: "changeInCashAndCashEquivalents",
+  },
 };
 
 export async function fetchFinancialStatement(
@@ -31,26 +82,23 @@ export async function fetchFinancialStatement(
   return {
     symbol: result.data.symbol,
     annualReports: result.data.annualReports
-      .map(normalizeReport)
+      .map((report) => normalizeReport(report, type))
       .sort(newestFirst),
     quarterlyReports: result.data.quarterlyReports
-      .map(normalizeReport)
+      .map((report) => normalizeReport(report, type))
       .sort(newestFirst),
   };
 }
 
 function normalizeReport(
   report: AlphaVantageFinancialReport,
+  type: FinancialStatementType,
 ): FinancialReport {
-  const { fiscalDateEnding, reportedCurrency, ...fields } = report;
-  const values = Object.fromEntries(
-    Object.entries(fields).map(([key, value]) => {
-      const number =
-        value === null || value.trim() === "" ? NaN : Number(value);
-      return [key, Number.isFinite(number) ? number : null];
-    }),
-  );
-  return { fiscalDateEnding, reportedCurrency, values };
+  return {
+    fiscalDateEnding: report.fiscalDateEnding,
+    reportedCurrency: report.reportedCurrency,
+    values: mapFinancialValues(report, statementFields[type]),
+  };
 }
 
 function newestFirst(a: FinancialReport, b: FinancialReport) {

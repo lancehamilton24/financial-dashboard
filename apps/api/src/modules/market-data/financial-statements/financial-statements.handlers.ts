@@ -13,14 +13,6 @@ export async function getFinancialStatementHandler(
   }>,
   reply: FastifyReply,
 ) {
-  if (request.query.provider !== "alpha-vantage") {
-    return reply
-      .code(501)
-      .send(
-        "Financial statements are currently available through Alpha Vantage only.",
-      );
-  }
-
   try {
     const statement = await getFinancialStatement(
       request.params.symbol,
@@ -41,7 +33,7 @@ export async function getFinancialStatementHandler(
     return reply
       .code(502)
       .send(
-        "Unable to load the statement from Alpha Vantage. The provider may be unavailable or its API limit may have been reached. Please try again later.",
+        "Unable to load the statement from the selected provider. The provider may be unavailable or its API limit may have been reached. Please try again later.",
       );
   }
 }

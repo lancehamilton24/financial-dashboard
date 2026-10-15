@@ -14,7 +14,7 @@ const marketDataClients: Partial<Record<MarketDataProvider, MarketDataClient>> =
 };
 
 export function getMarketDataClient(
-  provider: MarketDataProvider,
+  provider: MarketDataProvider = "financial-modeling-prep",
 ): MarketDataClient {
   const client = marketDataClients[provider];
 

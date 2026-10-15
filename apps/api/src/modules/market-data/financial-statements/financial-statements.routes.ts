@@ -26,11 +26,12 @@ export async function financialStatementRoutes(app: FastifyInstance) {
         },
         querystring: {
           type: "object",
-          required: ["provider"],
+
           properties: {
             provider: {
               type: "string",
               enum: ["alpha-vantage", "financial-modeling-prep"],
+              default: "financial-modeling-prep",
             },
           },
         },
