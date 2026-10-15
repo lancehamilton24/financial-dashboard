@@ -23,7 +23,6 @@ const statements: {
       ["sellingGeneralAndAdministrative", "Selling, general & administrative"],
       ["operatingExpenses", "Operating expenses"],
       ["operatingIncome", "Operating income"],
-      ["ebitda", "EBITDA"],
       ["interestExpense", "Interest expense"],
       ["incomeBeforeTax", "Income before tax"],
       ["incomeTaxExpense", "Income tax expense"],
