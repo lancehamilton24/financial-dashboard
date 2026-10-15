@@ -17,7 +17,7 @@ export async function fetchOverviewMetrics(
     request("analyst-estimates", {
       symbol,
       period: "annual",
-      limit: "100",
+      limit: "10",
       page: "0",
     }),
   ]);
